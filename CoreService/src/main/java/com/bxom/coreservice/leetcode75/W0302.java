@@ -2,6 +2,9 @@ package com.bxom.coreservice.leetcode75;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 @Slf4j
 public class W0302 {
     /**
@@ -11,7 +14,60 @@ public class W0302 {
      * @param args
      */
     public static void main(String[] args) {
-        int[][] mat = updateMatrix(new int[][]{{1, 0, 1, 1, 0, 0, 1, 0, 0, 1}, {0, 1, 1, 0, 1, 0, 1, 0, 1, 1}, {0, 0, 1, 0, 1, 0, 0, 1, 0, 0}, {1, 0, 1, 0, 1, 1, 1, 1, 1, 1}, {0, 1, 0, 1, 1, 0, 0, 0, 0, 1}, {0, 0, 1, 0, 1, 1, 1, 0, 1, 0}, {0, 1, 0, 1, 0, 1, 0, 0, 1, 1}, {1, 0, 0, 0, 1, 1, 1, 1, 0, 1}, {1, 1, 1, 1, 1, 1, 1, 0, 1, 0}, {1, 1, 1, 1, 0, 1, 0, 0, 1, 1}});
+//        int[][] mat = updateMatrix(new int[][]{{1, 0, 1, 1, 0, 0, 1, 0, 0, 1}, {0, 1, 1, 0, 1, 0, 1, 0, 1, 1}, {0, 0, 1, 0, 1, 0, 0, 1, 0, 0}, {1, 0, 1, 0, 1, 1, 1, 1, 1, 1}, {0, 1, 0, 1, 1, 0, 0, 0, 0, 1}, {0, 0, 1, 0, 1, 1, 1, 0, 1, 0}, {0, 1, 0, 1, 0, 1, 0, 0, 1, 1}, {1, 0, 0, 0, 1, 1, 1, 1, 0, 1}, {1, 1, 1, 1, 1, 1, 1, 0, 1, 0}, {1, 1, 1, 1, 0, 1, 0, 0, 1, 1}});
+        int[][] mat = solution2(new int[][]{{1, 0, 1, 1, 0, 0, 1, 0, 0, 1}, {0, 1, 1, 0, 1, 0, 1, 0, 1, 1}, {0, 0, 1, 0, 1, 0, 0, 1, 0, 0}, {1, 0, 1, 0, 1, 1, 1, 1, 1, 1}, {0, 1, 0, 1, 1, 0, 0, 0, 0, 1}, {0, 0, 1, 0, 1, 1, 1, 0, 1, 0}, {0, 1, 0, 1, 0, 1, 0, 0, 1, 1}, {1, 0, 0, 0, 1, 1, 1, 1, 0, 1}, {1, 1, 1, 1, 1, 1, 1, 0, 1, 0}, {1, 1, 1, 1, 0, 1, 0, 0, 1, 1}});
+        printMatrix(mat);
+    }
+
+    /**
+     * 思路：
+     * 1. 将所有等于 0 的位置放入队列
+     * 2. 依次将等于 0 位置周边的位置放入队列进入下一轮处理，依次循环至结束
+     *
+     * @param mat
+     * @return
+     */
+    public static int[][] solution2(int[][] mat) {
+        Queue<int[]> queue = new LinkedList<>();
+        int height = mat.length;
+        int width = mat[0].length;
+        int[][] result = new int[height][width];
+        boolean[][] visited = new boolean[height][width];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (mat[y][x] == 0) {
+                    visited[y][x] = true;
+                    queue.offer(new int[]{y, x});
+                }
+            }
+        }
+        while (!queue.isEmpty()) {
+            int[] item = queue.poll();
+            int x = item[1];
+            int y = item[0];
+            int val = result[y][x];
+            if (y - 1 >= 0 && !visited[y - 1][x]) {
+                visited[y - 1][x] = true;
+                result[y - 1][x] = val + 1;
+                queue.offer(new int[]{y - 1, x});
+            }
+            if (y + 1 < height && !visited[y + 1][x]) {
+                visited[y + 1][x] = true;
+                result[y + 1][x] = val + 1;
+                queue.offer(new int[]{y + 1, x});
+            }
+            if (x - 1 >= 0 && !visited[y][x - 1]) {
+                visited[y][x - 1] = true;
+                result[y][x - 1] = val + 1;
+                queue.offer(new int[]{y, x - 1});
+            }
+            if (x + 1 < width && !visited[y][x + 1]) {
+                visited[y][x + 1] = true;
+                result[y][x + 1] = val + 1;
+                queue.offer(new int[]{y, x + 1});
+            }
+        }
+        return result;
     }
 
     /**
