@@ -17,7 +17,16 @@ public class BST {
         tree.insert(7);
         tree.insert(12);
         tree.insert(18);
-        tree.delete(10);
+        StringBuilder middle = new StringBuilder();
+        tree.middleForeach(tree.root).forEach(val -> middle.append(val).append(","));
+        log.info("middle: {}", middle);
+        StringBuilder front = new StringBuilder();
+        tree.frontForeach(tree.root).forEach(val -> front.append(val).append(","));
+        log.info("front: {}", front);
+        StringBuilder behind = new StringBuilder();
+        tree.behindForeach(tree.root).forEach(val -> behind.append(val).append(","));
+        log.info("behind: {}", behind);
+//        tree.delete(10);
     }
 
     static class TreeNode {
@@ -32,21 +41,75 @@ public class BST {
 
     private TreeNode root;
 
-    // TODO:
-    public void insideForeach() {
-        List<Integer> list = new ArrayList<>();
-        TreeNode current = root;
-        while (current != null) {
-            if (current.left != null) {
-                current = current.left;
-            } else if (current.right != null) {
-                current = current.right;
-            } else {
-                list.add(current.value);
-            }
+    /**
+     * 中序遍历
+     *
+     * @param root 根节点
+     * @return
+     */
+    public List<Integer> middleForeach(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
         }
+        if (root.left != null) {
+            result.addAll(middleForeach(root.left));
+        }
+        result.add(root.value);
+        if (root.right != null) {
+            result.addAll(middleForeach(root.right));
+        }
+        return result;
     }
 
+    /**
+     * 前序遍历
+     *
+     * @param root 根节点
+     * @return
+     */
+    public List<Integer> frontForeach(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
+        result.add(root.value);
+        if (root.left != null) {
+            result.addAll(frontForeach(root.left));
+        }
+        if (root.right != null) {
+            result.addAll(frontForeach(root.right));
+        }
+        return result;
+    }
+
+    /**
+     * 后序遍历
+     *
+     * @param root 根节点
+     * @return
+     */
+    public List<Integer> behindForeach(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
+        if (root.left != null) {
+            result.addAll(behindForeach(root.left));
+        }
+        if (root.right != null) {
+            result.addAll(behindForeach(root.right));
+        }
+        result.add(root.value);
+        return result;
+    }
+
+    /**
+     * 查询值对应的节点
+     *
+     * @param val 节点值
+     * @return
+     */
     public TreeNode search(int val) {
         TreeNode current = root;
         while (current != null) {
@@ -61,6 +124,11 @@ public class BST {
         return null;
     }
 
+    /**
+     * 新增值
+     *
+     * @param val
+     */
     public void insert(int val) {
         TreeNode current = root;
         while (current != null) {
