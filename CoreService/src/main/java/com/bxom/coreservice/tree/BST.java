@@ -17,16 +17,19 @@ public class BST {
         tree.insert(7);
         tree.insert(12);
         tree.insert(18);
-        StringBuilder middle = new StringBuilder();
-        tree.middleForeach(tree.root).forEach(val -> middle.append(val).append(","));
-        log.info("middle: {}", middle);
-        StringBuilder front = new StringBuilder();
-        tree.frontForeach(tree.root).forEach(val -> front.append(val).append(","));
-        log.info("front: {}", front);
-        StringBuilder behind = new StringBuilder();
-        tree.behindForeach(tree.root).forEach(val -> behind.append(val).append(","));
-        log.info("behind: {}", behind);
-//        tree.delete(10);
+        StringBuilder middle1 = new StringBuilder();
+        tree.middleForeach(tree.root).forEach(val -> middle1.append(val).append(","));
+        log.info("middle: {}", middle1);
+//        StringBuilder front = new StringBuilder();
+//        tree.frontForeach(tree.root).forEach(val -> front.append(val).append(","));
+//        log.info("front: {}", front);
+//        StringBuilder behind = new StringBuilder();
+//        tree.behindForeach(tree.root).forEach(val -> behind.append(val).append(","));
+//        log.info("behind: {}", behind);
+        tree.delete(15);
+        StringBuilder middle2 = new StringBuilder();
+        tree.middleForeach(tree.root).forEach(val -> middle2.append(val).append(","));
+        log.info("middle: {}", middle2);
     }
 
     static class TreeNode {
@@ -153,15 +156,23 @@ public class BST {
 
     public void delete(int val) {
         TreeNode current = root;
+        TreeNode parent = root;
+        boolean isLeft = true;
         while (current != null) {
             if (current.value < val) {
+                parent = current;
                 current = current.right;
+                isLeft = false;
             } else if (current.value > val) {
+                parent = current;
                 current = current.left;
+                isLeft = true;
             } else {
                 if (current.left != null && current.right != null) {
-                    deleteMidNode();
+                    current.value = deleteMidNodeAndReturnVal(current);
                 } else if (current.left == null && current.right == null) {
+                    if (isLeft) parent.left = null;
+                    else parent.right = null;
                 } else if (current.left == null) {
                     TreeNode temp = current.right;
                     current.value = temp.value;
@@ -178,9 +189,46 @@ public class BST {
         }
     }
 
-    // TODO:
-    private void deleteMidNode() {
-//        searchLeftBiggestNode();
-//        searchRightSmallestNode();
+    private int deleteMidNodeAndReturnVal(TreeNode root) {
+//        return setLeftSubBiggestNodeNull(root);
+        return setRightSubSmallestNodeNull(root);
+    }
+
+    private int setLeftSubBiggestNodeNull(TreeNode root) {
+        TreeNode parent = root;
+        TreeNode sub = root.left;
+        if (sub.right == null) {
+            parent.left = null;
+            return sub.value;
+        }
+        while (true) {
+            if (sub.right != null) {
+                parent = sub;
+                sub = sub.right;
+            } else {
+                int val = sub.value;
+                parent.right = null;
+                return val;
+            }
+        }
+    }
+
+    private int setRightSubSmallestNodeNull(TreeNode root) {
+        TreeNode parent = root;
+        TreeNode sub = root.right;
+        if (sub.left == null) {
+            parent.right = null;
+            return sub.value;
+        }
+        while (true) {
+            if (sub.left != null) {
+                parent = sub;
+                sub = sub.left;
+            } else {
+                int val = sub.value;
+                parent.left = null;
+                return val;
+            }
+        }
     }
 }
