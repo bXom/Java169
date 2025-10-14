@@ -156,7 +156,7 @@ public class BST {
 
     public void delete(int val) {
         TreeNode current = root;
-        TreeNode parent = root;
+        TreeNode parent = null;
         boolean isLeft = true;
         while (current != null) {
             if (current.value < val) {
@@ -169,9 +169,10 @@ public class BST {
                 isLeft = true;
             } else {
                 if (current.left != null && current.right != null) {
-                    current.value = deleteMidNodeAndReturnVal(current);
+                    deleteMidNodeAndReturnVal(current);
                 } else if (current.left == null && current.right == null) {
-                    if (isLeft) parent.left = null;
+                    if (parent == null) root = null;
+                    else if (isLeft) parent.left = null;
                     else parent.right = null;
                 } else if (current.left == null) {
                     TreeNode temp = current.right;
@@ -189,17 +190,19 @@ public class BST {
         }
     }
 
-    private int deleteMidNodeAndReturnVal(TreeNode root) {
-//        return setLeftSubBiggestNodeNull(root);
-        return setRightSubSmallestNodeNull(root);
+    private void deleteMidNodeAndReturnVal(TreeNode root) {
+        setLeftSubBiggestNodeNull(root);
+//        setRightSubSmallestNodeNull(root);
     }
 
-    private int setLeftSubBiggestNodeNull(TreeNode root) {
-        TreeNode parent = root;
-        TreeNode sub = root.left;
+    private void setLeftSubBiggestNodeNull(TreeNode node) {
+        TreeNode parent = node;
+        TreeNode sub = node.left;
         if (sub.right == null) {
-            parent.left = null;
-            return sub.value;
+            int val = sub.value;
+            parent.left = sub.left;
+            node.value = val;
+            return;
         }
         while (true) {
             if (sub.right != null) {
@@ -207,18 +210,21 @@ public class BST {
                 sub = sub.right;
             } else {
                 int val = sub.value;
-                parent.right = null;
-                return val;
+                parent.right = sub.left;
+                node.value = val;
+                return;
             }
         }
     }
 
-    private int setRightSubSmallestNodeNull(TreeNode root) {
-        TreeNode parent = root;
-        TreeNode sub = root.right;
+    private void setRightSubSmallestNodeNull(TreeNode node) {
+        TreeNode parent = node;
+        TreeNode sub = node.right;
         if (sub.left == null) {
-            parent.right = null;
-            return sub.value;
+            int val = sub.value;
+            parent.right = sub.right;
+            node.value = val;
+            return;
         }
         while (true) {
             if (sub.left != null) {
@@ -226,8 +232,9 @@ public class BST {
                 sub = sub.left;
             } else {
                 int val = sub.value;
-                parent.left = null;
-                return val;
+                parent.left = sub.right;
+                node.value = val;
+                return;
             }
         }
     }
