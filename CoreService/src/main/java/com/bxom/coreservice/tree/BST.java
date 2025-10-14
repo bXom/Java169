@@ -15,8 +15,12 @@ public class BST {
         tree.insert(15);
         tree.insert(3);
         tree.insert(7);
-        tree.insert(12);
-        tree.insert(18);
+        tree.insert(4);
+//        tree.insert(12);
+//        tree.insert(18);
+//        tree.insert(16);
+//        tree.insert(20);
+//        tree.insert(17);
         StringBuilder middle1 = new StringBuilder();
         tree.middleForeach(tree.root).forEach(val -> middle1.append(val).append(","));
         log.info("middle: {}", middle1);
@@ -26,7 +30,7 @@ public class BST {
 //        StringBuilder behind = new StringBuilder();
 //        tree.behindForeach(tree.root).forEach(val -> behind.append(val).append(","));
 //        log.info("behind: {}", behind);
-        tree.delete(15);
+        tree.delete(5);
         StringBuilder middle2 = new StringBuilder();
         tree.middleForeach(tree.root).forEach(val -> middle2.append(val).append(","));
         log.info("middle: {}", middle2);
@@ -169,72 +173,68 @@ public class BST {
                 isLeft = true;
             } else {
                 if (current.left != null && current.right != null) {
-                    deleteMidNodeAndReturnVal(current);
+                    if (parent == null) root = deleteMidNodeAndReturnVal(current);
+                    else if (isLeft) parent.left = deleteMidNodeAndReturnVal(current);
+                    else parent.right = deleteMidNodeAndReturnVal(current);
                 } else if (current.left == null && current.right == null) {
                     if (parent == null) root = null;
                     else if (isLeft) parent.left = null;
                     else parent.right = null;
                 } else if (current.left == null) {
-                    TreeNode temp = current.right;
-                    current.value = temp.value;
-                    current.left = temp.left;
-                    current.right = temp.right;
+                    if (parent == null) root = current.right;
+                    else if (isLeft) parent.left = current.right;
+                    else parent.right = current.right;
                 } else {
-                    TreeNode temp = current.left;
-                    current.value = temp.value;
-                    current.left = temp.left;
-                    current.right = temp.right;
+                    if (parent == null) root = current.left;
+                    else if (isLeft) parent.left = current.left;
+                    else parent.right = current.left;
                 }
                 return;
             }
         }
     }
 
-    private void deleteMidNodeAndReturnVal(TreeNode root) {
-        setLeftSubBiggestNodeNull(root);
-//        setRightSubSmallestNodeNull(root);
+    private TreeNode deleteMidNodeAndReturnVal(TreeNode root) {
+        return setLeftSubBiggestNodeNull(root);
+//        return setRightSubSmallestNodeNull(root);
     }
 
-    private void setLeftSubBiggestNodeNull(TreeNode node) {
-        TreeNode parent = node;
-        TreeNode sub = node.left;
+    private TreeNode setLeftSubBiggestNodeNull(TreeNode equalNode) {
+        TreeNode parent = equalNode;
+        TreeNode sub = equalNode.left;
         if (sub.right == null) {
-            int val = sub.value;
-            parent.left = sub.left;
-            node.value = val;
-            return;
+            sub.right = equalNode.right;
+            return sub;
         }
         while (true) {
             if (sub.right != null) {
                 parent = sub;
                 sub = sub.right;
             } else {
-                int val = sub.value;
                 parent.right = sub.left;
-                node.value = val;
-                return;
+                sub.right = equalNode.right;
+                sub.left = equalNode.left;
+                return sub;
             }
         }
     }
 
-    private void setRightSubSmallestNodeNull(TreeNode node) {
-        TreeNode parent = node;
-        TreeNode sub = node.right;
+    private TreeNode setRightSubSmallestNodeNull(TreeNode equalNode) {
+        TreeNode parent = equalNode;
+        TreeNode sub = equalNode.right;
         if (sub.left == null) {
-            int val = sub.value;
-            parent.right = sub.right;
-            node.value = val;
-            return;
+            sub.left = equalNode.left;
+            return sub;
         }
         while (true) {
             if (sub.left != null) {
                 parent = sub;
                 sub = sub.left;
             } else {
-                int val = sub.value;
                 parent.left = sub.right;
-                node.value = val;
-                return;
+                sub.left = equalNode.left;
+                sub.right = equalNode.right;
+                return sub;
             }
         }
     }
