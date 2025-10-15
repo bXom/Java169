@@ -59,14 +59,18 @@ public class BST {
         if (root == null) {
             return result;
         }
+        mForeach(root, result);
+        return result;
+    }
+
+    private void mForeach(TreeNode root, List<Integer> result) {
         if (root.left != null) {
-            result.addAll(middleForeach(root.left));
+            mForeach(root.left, result);
         }
         result.add(root.value);
         if (root.right != null) {
-            result.addAll(middleForeach(root.right));
+            mForeach(root.right, result);
         }
-        return result;
     }
 
     /**
@@ -80,14 +84,18 @@ public class BST {
         if (root == null) {
             return result;
         }
+        fForeach(root, result);
+        return result;
+    }
+
+    private void fForeach(TreeNode root, List<Integer> result) {
         result.add(root.value);
         if (root.left != null) {
-            result.addAll(frontForeach(root.left));
+            fForeach(root.left, result);
         }
         if (root.right != null) {
-            result.addAll(frontForeach(root.right));
+            fForeach(root.right, result);
         }
-        return result;
     }
 
     /**
@@ -101,14 +109,18 @@ public class BST {
         if (root == null) {
             return result;
         }
+        bForeach(root, result);
+        return result;
+    }
+
+    private void bForeach(TreeNode root, List<Integer> result) {
         if (root.left != null) {
-            result.addAll(behindForeach(root.left));
+            bForeach(root.left, result);
         }
         if (root.right != null) {
-            result.addAll(behindForeach(root.right));
+            bForeach(root.right, result);
         }
         result.add(root.value);
-        return result;
     }
 
     /**
