@@ -15,7 +15,24 @@ public class LeetCode98 {
     }
 
     public static boolean isValidBST(TreeNode root) {
-        return solution1(root);
+//        return solution1(root);
+        return solution2(root);
+    }
+
+    /**
+     * 迭代遍历
+     *
+     * @param root
+     * @return
+     */
+    private static boolean solution2(TreeNode root) {
+        return foreach(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    private static boolean foreach(TreeNode root, long minVal, long maxVal) {
+        if (root == null) return true;
+        if (root.val <= minVal || root.val >= maxVal) return false;
+        return foreach(root.left, minVal, root.val) && foreach(root.right, root.val, maxVal);
     }
 
     /**
