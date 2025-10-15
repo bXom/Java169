@@ -202,40 +202,30 @@ public class BST {
     private TreeNode setLeftSubBiggestNodeNull(TreeNode equalNode) {
         TreeNode parent = equalNode;
         TreeNode sub = equalNode.left;
-        if (sub.right == null) {
-            sub.right = equalNode.right;
-            return sub;
+        while (sub.right != null) {
+            parent = sub;
+            sub = sub.right;
         }
-        while (true) {
-            if (sub.right != null) {
-                parent = sub;
-                sub = sub.right;
-            } else {
-                parent.right = sub.left;
-                sub.right = equalNode.right;
-                sub.left = equalNode.left;
-                return sub;
-            }
+        if (parent != equalNode) {
+            parent.right = sub.left;
+            sub.left = equalNode.left;
         }
+        sub.right = equalNode.right;
+        return sub;
     }
 
     private TreeNode setRightSubSmallestNodeNull(TreeNode equalNode) {
         TreeNode parent = equalNode;
         TreeNode sub = equalNode.right;
-        if (sub.left == null) {
-            sub.left = equalNode.left;
-            return sub;
+        while (sub.left != null) {
+            parent = sub;
+            sub = sub.left;
         }
-        while (true) {
-            if (sub.left != null) {
-                parent = sub;
-                sub = sub.left;
-            } else {
-                parent.left = sub.right;
-                sub.left = equalNode.left;
-                sub.right = equalNode.right;
-                return sub;
-            }
+        if (parent != equalNode) {
+            parent.left = sub.right;
+            sub.right = equalNode.right;
         }
+        sub.left = equalNode.left;
+        return sub;
     }
 }
