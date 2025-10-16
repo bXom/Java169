@@ -114,6 +114,20 @@ public class AVL {
     }
 
     private void balaLR(TreeNode parent) {
+        balaL(parent.left);
+        balaLL(parent);
+    }
+
+    private void balaL(TreeNode sub) {
+        TreeNode parent = sub.parent;
+        TreeNode subRight = sub.right;
+        TreeNode subRightLeft = subRight.left;
+        if (subRightLeft != null) subRightLeft.parent = sub;
+        sub.right = subRightLeft;
+        sub.parent = subRight;
+        subRight.left = sub;
+        subRight.parent = parent;
+        parent.left = subRight;
     }
 
     private void balaRR(TreeNode parent) {
