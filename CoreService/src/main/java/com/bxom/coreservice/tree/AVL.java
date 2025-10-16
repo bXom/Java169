@@ -155,10 +155,79 @@ public class AVL {
         root.parent = null;
     }
 
+    public void delete(int val) {
+        TreeNode current = root;
+        boolean isLeft = false;
+        while (current != null) {
+            if (current.value == val) {
+                if (current.left == null && current.right == null) {
+                    if (current.parent == null) {
+                        root = null;
+                        return;
+                    }
+                    if (isLeft) current.parent.left = null;
+                    else current.parent.right = null;
+                } else if (current.left != null && current.right != null) {
+                    TreeNode node = removePAndReturnLeftBiggest(current);
+//                    TreeNode node = removePAndReturnRightSmallest();
+                    if (current.parent == null) {
+                        root = node;
+                        return;
+                    }
+                    if (isLeft) current.parent.left = node;
+                    else current.parent.right = node;
+                    node.parent = current.parent;
+                } else if (current.left == null) {
+                    if (current.parent == null) {
+                        root = current.right;
+                        return;
+                    }
+                    if (isLeft) current.parent.left = current.right;
+                    else current.parent.right = current.right;
+                    current.right.parent = current.parent;
+                } else {
+                    if (current.parent == null) {
+                        root = current.left;
+                        return;
+                    }
+                    if (isLeft) current.parent.left = current.left;
+                    else current.parent.right = current.left;
+                    current.left.parent = current.parent;
+                }
+                deleteBala(current.parent);
+            } else if (current.value > val) {
+                current = current.left;
+                isLeft = true;
+            } else {
+                current = current.right;
+                isLeft = false;
+            }
+        }
+    }
+
+    private TreeNode removePAndReturnLeftBiggest(TreeNode removeNode) {
+        TreeNode sub = removeNode.left;
+        while (sub.right != null) {
+            sub = sub.right;
+        }
+        removeNode.parent.left = sub;
+        sub.parent.right = removeNode.right;
+        sub.parent = removeNode.parent;
+        return sub;
+    }
+//    private TreeNode removePAndReturnRightSmallest(TreeNode node) {}
+
+    private void deleteBala(TreeNode node) {
+        while (node != null) {
+            selfBalance(node);
+            node = node.parent;
+        }
+    }
+
     /**
      * 自平衡
      *
-     * @param parentNode 插入节点的祖先节点
+     * @param parentNode 需要校验平衡因子的节点
      */
     private void selfBalance(TreeNode parentNode) {
         if (parentNode == null) return;
