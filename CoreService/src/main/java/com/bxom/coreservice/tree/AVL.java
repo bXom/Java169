@@ -90,6 +90,7 @@ public class AVL {
      * @return
      */
     private int getHeight(TreeNode node, int height) {
+        if (node == null) return 0;
         if (node.right == null && node.left == null) return height + 1;
         if (node.right != null && node.left != null) {
             return Math.max(getHeight(node.right, height), getHeight(node.left, height)) + 1;
