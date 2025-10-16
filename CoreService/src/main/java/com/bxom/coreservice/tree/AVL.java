@@ -20,6 +20,7 @@ public class AVL {
         public int value;
         public TreeNode left;
         public TreeNode right;
+        public TreeNode parent;
 
         public TreeNode(int value) {
             this.value = value;
@@ -34,6 +35,7 @@ public class AVL {
             if (current.value > val) {
                 if (current.left == null) {
                     current.left = new TreeNode(val);
+                    current.left.parent = current;
                     selfBalance();
                     return;
                 }
@@ -41,6 +43,7 @@ public class AVL {
             } else if (current.value < val) {
                 if (current.right == null) {
                     current.right = new TreeNode(val);
+                    current.right.parent = current;
                     selfBalance();
                     return;
                 }
@@ -50,6 +53,7 @@ public class AVL {
             }
         }
         root = new TreeNode(val);
+        root.parent = null;
     }
 
     private void selfBalance() {
