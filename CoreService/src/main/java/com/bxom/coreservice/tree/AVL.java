@@ -6,15 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 public class AVL {
     public static void main(String[] args) {
         AVL avl = new AVL();
+        avl.insert(20);
         avl.insert(7);
-//        avl.insert(1);
-        avl.insert(12);
         avl.insert(29);
-//        avl.insert(21);
-        avl.insert(39);
-        log.info("height: {}", avl.getHeight(avl.root.right, 0));
-        log.info("depth: {}", avl.getDepth(avl.root.right));
-        log.info("calHeightDistance: {}", avl.calHeightDistance(avl.root.right));
+        avl.insert(5);
+        avl.insert(10);
+        avl.insert(6);
+//        log.info("height: {}", avl.getHeight(avl.root.right, 0));
+//        log.info("depth: {}", avl.getDepth(avl.root.right));
+        log.info("calHeightDistance: {}", avl.calHeightDistance(avl.root));
     }
 
     static class TreeNode {
@@ -37,7 +37,7 @@ public class AVL {
                 if (current.left == null) {
                     current.left = new TreeNode(val);
                     current.left.parent = current;
-                    selfBalance();
+                    selfBalance(current);
                     return;
                 }
                 current = current.left;
@@ -45,7 +45,7 @@ public class AVL {
                 if (current.right == null) {
                     current.right = new TreeNode(val);
                     current.right.parent = current;
-                    selfBalance();
+                    selfBalance(current);
                     return;
                 }
                 current = current.right;
@@ -57,8 +57,84 @@ public class AVL {
         root.parent = null;
     }
 
-    private void selfBalance() {
+    /**
+     * 自平衡
+     *
+     * @param parentNode 插入节点的祖先节点
+     */
+    private void selfBalance(TreeNode parentNode) {
+        if (parentNode == null) return;
+        int pDist = calHeightDistance(parentNode);
+        if (pDist > 1) {
+            int subDist = calHeightDistance(parentNode.left);
+            if (subDist > 0) {
+                balaLL(parentNode);
+            } else {
+                balaLR(parentNode);
+            }
+        } else if (pDist < -1) {
+            int subDist = calHeightDistance(parentNode.right);
+            if (subDist > 0) {
+                balaRL(parentNode);
+            } else {
+                balaRR(parentNode);
+            }
+        } else {
+            selfBalance(parentNode.parent);
+        }
+    }
 
+    /**
+     * LL 类型自平衡
+     *
+     * @param parent 失衡节点（P 节点）
+     */
+    private void balaLL(TreeNode parent) {
+        TreeNode sub = parent.left;
+        TreeNode subRight = sub.right;
+        // sub.right.parent
+        if (subRight != null) subRight.parent = parent;
+        // parent.left
+        parent.left = subRight;
+        // sub.right
+        sub.right = parent;
+        // pp.sub
+        // sub.parent
+        TreeNode parentP = parent.parent;
+        sub.parent = parentP;
+        if (parentP == null) {
+            root = sub;
+        } else if (parentP.left == parent) {
+            parentP.left = sub;
+        } else {
+            parentP.right = sub;
+        }
+        // parent.parent
+        parent.parent = sub;
+    }
+
+    private void balaLR(TreeNode parent) {
+    }
+
+    private void balaRR(TreeNode parent) {
+        TreeNode sub = parent.right;
+        TreeNode subLeft = sub.left;
+        if (subLeft != null) subLeft.parent = parent;
+        parent.right = subLeft;
+        sub.left = parent;
+        TreeNode parentP = parent.parent;
+        sub.parent = parentP;
+        if (parentP == null) {
+            root = sub;
+        } else if (parentP.right == parent) {
+            parentP.right = sub;
+        } else {
+            parentP.left = sub;
+        }
+        parent.parent = sub;
+    }
+
+    private void balaRL(TreeNode parent) {
     }
 
     /**
