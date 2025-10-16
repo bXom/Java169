@@ -2,6 +2,9 @@ package com.bxom.coreservice.tree;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 public class AVL {
     public static void main(String[] args) {
@@ -29,6 +32,101 @@ public class AVL {
     }
 
     private TreeNode root;
+
+    /**
+     * 中序遍历
+     *
+     * @param root 根节点
+     * @return
+     */
+    public List<Integer> middleForeach(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
+        mForeach(root, result);
+        return result;
+    }
+
+    private void mForeach(TreeNode root, List<Integer> result) {
+        if (root.left != null) {
+            mForeach(root.left, result);
+        }
+        result.add(root.value);
+        if (root.right != null) {
+            mForeach(root.right, result);
+        }
+    }
+
+    /**
+     * 前序遍历
+     *
+     * @param root 根节点
+     * @return
+     */
+    public List<Integer> frontForeach(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
+        fForeach(root, result);
+        return result;
+    }
+
+    private void fForeach(TreeNode root, List<Integer> result) {
+        result.add(root.value);
+        if (root.left != null) {
+            fForeach(root.left, result);
+        }
+        if (root.right != null) {
+            fForeach(root.right, result);
+        }
+    }
+
+    /**
+     * 后序遍历
+     *
+     * @param root 根节点
+     * @return
+     */
+    public List<Integer> behindForeach(TreeNode root) {
+        List<Integer> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
+        bForeach(root, result);
+        return result;
+    }
+
+    private void bForeach(TreeNode root, List<Integer> result) {
+        if (root.left != null) {
+            bForeach(root.left, result);
+        }
+        if (root.right != null) {
+            bForeach(root.right, result);
+        }
+        result.add(root.value);
+    }
+
+    /**
+     * 查询值对应的节点
+     *
+     * @param val 节点值
+     * @return
+     */
+    public TreeNode search(int val) {
+        TreeNode current = root;
+        while (current != null) {
+            if (current.value == val) {
+                return current;
+            } else if (current.value > val) {
+                current = current.left;
+            } else {
+                current = current.right;
+            }
+        }
+        return null;
+    }
 
     public void insert(int val) {
         TreeNode current = root;
