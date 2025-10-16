@@ -7,13 +7,14 @@ public class AVL {
     public static void main(String[] args) {
         AVL avl = new AVL();
         avl.insert(7);
-        avl.insert(1);
+//        avl.insert(1);
         avl.insert(12);
         avl.insert(29);
-        avl.insert(21);
+//        avl.insert(21);
         avl.insert(39);
         log.info("height: {}", avl.getHeight(avl.root.right, 0));
         log.info("depth: {}", avl.getDepth(avl.root.right));
+        log.info("calHeightDistance: {}", avl.calHeightDistance(avl.root.right));
     }
 
     static class TreeNode {
@@ -58,6 +59,18 @@ public class AVL {
 
     private void selfBalance() {
 
+    }
+
+    /**
+     * 计算节点左右子树高度差
+     *
+     * @param node
+     * @return
+     */
+    private int calHeightDistance(TreeNode node) {
+        int left = getHeight(node.left, 0);
+        int right = getHeight(node.right, 0);
+        return left - right;
     }
 
     /**
