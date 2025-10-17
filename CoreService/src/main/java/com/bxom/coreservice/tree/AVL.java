@@ -160,6 +160,7 @@ public class AVL {
         boolean isLeft = false;
         while (current != null) {
             if (current.value == val) {
+                TreeNode parent = current.parent;
                 if (current.left == null && current.right == null) {
                     if (current.parent == null) {
                         root = null;
@@ -168,15 +169,8 @@ public class AVL {
                     if (isLeft) current.parent.left = null;
                     else current.parent.right = null;
                 } else if (current.left != null && current.right != null) {
-                    TreeNode node = removePAndReturnLeftBiggest(current);
-//                    TreeNode node = removePAndReturnRightSmallest();
-                    if (current.parent == null) {
-                        root = node;
-                        return;
-                    }
-                    if (isLeft) current.parent.left = node;
-                    else current.parent.right = node;
-                    node.parent = current.parent;
+                    parent = updateLeftSubAndReturnP(current);
+//                    parent = updateRightSubAndReturnP(current);
                 } else if (current.left == null) {
                     if (current.parent == null) {
                         root = current.right;
@@ -194,7 +188,7 @@ public class AVL {
                     else current.parent.right = current.left;
                     current.left.parent = current.parent;
                 }
-                deleteBala(current.parent);
+                deleteBala(parent);
             } else if (current.value > val) {
                 current = current.left;
                 isLeft = true;
@@ -205,17 +199,62 @@ public class AVL {
         }
     }
 
-    private TreeNode removePAndReturnLeftBiggest(TreeNode removeNode) {
-        TreeNode sub = removeNode.left;
-        while (sub.right != null) {
-            sub = sub.right;
+    private TreeNode updateLeftSubAndReturnP(TreeNode equalNode) {
+        TreeNode parent = equalNode.parent;
+        TreeNode leftSub = equalNode.left;
+        TreeNode leftMax = leftSub;
+        while (leftMax.right != null) {
+            leftMax = leftMax.right;
         }
-        removeNode.parent.left = sub;
-        sub.parent.right = removeNode.right;
-        sub.parent = removeNode.parent;
-        return sub;
+        TreeNode reCheckNode = leftMax.parent;
+        if (leftMax != leftSub) {
+            leftMax.parent.right = leftMax.left;
+            // leftMax.left
+            if (leftMax.left != null) leftMax.left.parent = leftMax.parent;
+        } else {
+            reCheckNode = leftMax;
+        }
+        // equalNode.left & equalNode.right
+        equalNode.left.parent = leftMax;
+        equalNode.right.parent = leftMax;
+        // leftMax
+        leftMax.parent = parent;
+        leftMax.left = equalNode.left;
+        leftMax.right = equalNode.right;
+        // parent
+        if (parent == null) root = leftMax;
+        else if (parent.left == leftSub) parent.left = leftMax;
+        else parent.right = leftMax;
+        return reCheckNode;
     }
-//    private TreeNode removePAndReturnRightSmallest(TreeNode node) {}
+
+    private TreeNode updateRightSubAndReturnP(TreeNode equalNode) {
+        TreeNode parent = equalNode.parent;
+        TreeNode rightSub = equalNode.right;
+        TreeNode rightMin = rightSub;
+        while (rightMin.left != null) {
+            rightMin = rightMin.left;
+        }
+        TreeNode reCheckNode = rightMin.parent;
+        if (rightMin != rightSub) {
+            rightMin.parent.left = rightMin.right;
+            if (rightMin.right != null) rightMin.right.parent = rightMin.parent;
+        } else {
+            reCheckNode = rightMin;
+        }
+        // equalNode.left & equalNode.right
+        equalNode.left.parent = rightMin;
+        equalNode.right.parent = rightMin;
+        // rightMin
+        rightMin.parent = parent;
+        rightMin.left = equalNode.left;
+        rightMin.right = equalNode.right;
+        // parent
+        if (parent == null) root = rightMin;
+        else if (parent.left == rightSub) parent.left = rightMin;
+        else parent.right = rightMin;
+        return reCheckNode;
+    }
 
     private void deleteBala(TreeNode node) {
         while (node != null) {
