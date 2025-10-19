@@ -13,6 +13,7 @@ public class W0401 {
         log.info("result: {}", canFinish(2, new int[][]{{1, 0}, {0, 1}}));
     }
 
+    // TODO: failed
     private static boolean solution1(int numCourses, int[][] prerequisites) {
 //        if (prerequisites.length == 0) return true;
         Map<Integer, Set<Integer>> preMap = new HashMap<>();
