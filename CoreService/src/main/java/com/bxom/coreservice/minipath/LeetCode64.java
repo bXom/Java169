@@ -4,6 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class LeetCode64 {
+    /**
+     * leetcode-64
+     * https://leetcode.cn/problems/minimum-path-sum/
+     *
+     * @param args
+     */
     public static void main(String[] args) {
 //        log.info("{}", minPathSum(new int[][]{{1, 3, 1}, {1, 5, 1}, {4, 2, 1}}));
         log.info("{}", minPathSum(new int[][]{{1, 2, 3}, {4, 5, 6}}));
