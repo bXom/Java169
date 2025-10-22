@@ -2,7 +2,6 @@ package com.bxom.coreservice.minipath;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,56 +18,56 @@ public class Floyd {
         });
     }
 
+    private static final long DEFAULT = Long.MAX_VALUE / 2;
+
     public static void floyd(long[][] nodeMap) {
-        int maxSize = nodeMap.length * 2;
-        long[][] dist = new long[maxSize][maxSize];
-        long[][] path = new long[maxSize][maxSize];
-        for (long[] longs : path) {
-            Arrays.fill(longs, -1);
-        }
         // node 与 int 类型 id 映射表
         Map<Long, Integer> node2IdMap = new HashMap<>();
         int id = 0;
         for (long[] node : nodeMap) {
             long from = node[0];
             long to = node[1];
-            long distVal = node[2];
             if (!node2IdMap.containsKey(from)) node2IdMap.put(from, id++);
             if (!node2IdMap.containsKey(to)) node2IdMap.put(to, id++);
+        }
+        // 节点数量
+        int nodeSize = node2IdMap.size();
+        // 初始化最短距离和路径数组
+        long[][] dist = new long[nodeSize][nodeSize];
+        long[][] path = new long[nodeSize][nodeSize];
+        // 初始化距离及路径
+        for (int i = 0; i < node2IdMap.size(); i++) {
+            for (int j = 0; j < node2IdMap.size(); j++) {
+                if (i == j) {
+                    dist[i][j] = 0;
+                } else {
+                    dist[i][j] = DEFAULT;
+                }
+                path[i][j] = -1;
+            }
+        }
+        // 遍历节点路径，更新任意两点距离及路径
+        for (long[] node : nodeMap) {
+            long from = node[0];
+            long to = node[1];
+            long distVal = node[2];
             dist[node2IdMap.get(from)][node2IdMap.get(to)] = distVal;
             path[node2IdMap.get(from)][node2IdMap.get(to)] = from;
         }
-        for (int i = 0; i < node2IdMap.size(); i++) {
-            for (int j = 0; j < node2IdMap.size(); j++) {
-                if (i != j && dist[i][j] == 0) dist[i][j] = -1;
-            }
-        }
-        print(node2IdMap, dist, path);
-        int nodeSize = node2IdMap.size();
         for (int mid = 0; mid < nodeSize; mid++) {
-            long[][] newDist = new long[nodeSize][nodeSize];
-            long[][] newPath = new long[nodeSize][nodeSize];
             for (int i = 0; i < nodeSize; i++) {
                 for (int j = 0; j < nodeSize; j++) {
-                    if (dist[i][mid] == -1 || dist[mid][j] == -1) {
-                        newDist[i][j] = dist[i][j];
-                        newPath[i][j] = path[i][j];
+                    if (dist[i][mid] == DEFAULT || dist[mid][j] == DEFAULT) {
                         continue;
                     }
                     long newDistVal = dist[i][mid] + dist[mid][j];
-                    if (dist[i][j] == -1 || newDistVal < dist[i][j]) {
-                        newDist[i][j] = newDistVal;
-                        newPath[i][j] = path[mid][j];
-                    } else {
-                        newDist[i][j] = dist[i][j];
-                        newPath[i][j] = path[i][j];
+                    if (dist[i][j] == DEFAULT || newDistVal < dist[i][j]) {
+                        dist[i][j] = newDistVal;
+                        path[i][j] = path[mid][j];
                     }
                 }
             }
-            dist = newDist;
-            path = newPath;
         }
-        print(node2IdMap, dist, path);
     }
 
     private static void print(Map<Long, Integer> node2IdMap, long[][] dist, long[][] path) {
