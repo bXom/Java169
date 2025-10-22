@@ -38,13 +38,46 @@ public class Floyd {
             dist[node2IdMap.get(from)][node2IdMap.get(to)] = distVal;
             path[node2IdMap.get(from)][node2IdMap.get(to)] = from;
         }
+        for (int i = 0; i < node2IdMap.size(); i++) {
+            for (int j = 0; j < node2IdMap.size(); j++) {
+                if (i != j && dist[i][j] == 0) dist[i][j] = -1;
+            }
+        }
+        print(node2IdMap, dist, path);
+        int nodeSize = node2IdMap.size();
+        for (int mid = 0; mid < nodeSize; mid++) {
+            long[][] newDist = new long[nodeSize][nodeSize];
+            long[][] newPath = new long[nodeSize][nodeSize];
+            for (int i = 0; i < nodeSize; i++) {
+                for (int j = 0; j < nodeSize; j++) {
+                    if (dist[i][mid] == -1 || dist[mid][j] == -1) {
+                        newDist[i][j] = dist[i][j];
+                        newPath[i][j] = path[i][j];
+                        continue;
+                    }
+                    long newDistVal = dist[i][mid] + dist[mid][j];
+                    if (dist[i][j] == -1 || newDistVal < dist[i][j]) {
+                        newDist[i][j] = newDistVal;
+                        newPath[i][j] = path[mid][j];
+                    } else {
+                        newDist[i][j] = dist[i][j];
+                        newPath[i][j] = path[i][j];
+                    }
+                }
+            }
+            dist = newDist;
+            path = newPath;
+        }
+        print(node2IdMap, dist, path);
+    }
+
+    private static void print(Map<Long, Integer> node2IdMap, long[][] dist, long[][] path) {
         for (Map.Entry<Long, Integer> node : node2IdMap.entrySet()) {
             log.info("节点 - ID 映射关系 ---- node: {}, id: {}", node.getKey(), node.getValue());
         }
         for (int i = 0; i < node2IdMap.size(); i++) {
             StringBuilder sbD = new StringBuilder();
             for (int j = 0; j < node2IdMap.size(); j++) {
-                if (i != j && dist[i][j] == 0) dist[i][j] = -1;
                 sbD.append(dist[i][j]).append(", ");
             }
             log.info("dist ---- i: {}, val: {}", i, sbD.substring(0, sbD.length() - 2));
@@ -56,6 +89,5 @@ public class Floyd {
             }
             log.info("path ---- i: {}, val: {}", i, sbP.substring(0, sbP.length() - 2));
         }
-
     }
 }
