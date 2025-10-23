@@ -24,7 +24,7 @@ public class AOE {
     }
 
     public static int calMaxPath(int[][] graph) {
-        // 事件出度入度，int[0] = 出度, int[1] = 入度
+        // 事件出度入度，value = {出度, 入度}
         Map<Integer, int[]> oiMap = new HashMap<>();
         for (int[] map : graph) {
             oiMap.merge(map[0], new int[]{1, 0}, (act, defaultAct) -> {
@@ -54,8 +54,17 @@ public class AOE {
 //        oiMap.forEach((k, v) -> log.info("{}: {}, {}", k, v[0], v[1]));
         calMaxEvent(graph2Matrix, maxMap, oiMap, minMap);
 //        maxMap.forEach((k, v) -> log.info("max ---- {}: {}", k, v));
-        calActivity(graph2Matrix, minMap, maxMap);
-        return 1;
+        // key = {from, to}, value = {min, max}
+        Map<int[], int[]> activityMM = new HashMap<>();
+        calActivity(graph2Matrix, activityMM, minMap, maxMap);
+//        activityMM.forEach((k, v) -> log.info("{} -> {} : {}, {}", k[0]+1, k[1]+1, v[0], v[1]));
+        int maxPath = 0;
+        for (int i = 0; i < graph2Matrix.length; i++) {
+            if (minMap.get(i + 1) == maxMap.get(i + 1)) {
+                maxPath = Math.max(maxPath, minMap.get(i + 1));
+            }
+        }
+        return maxPath;
     }
 
     private static void calMinEvent(int[][] graph2Matrix, Map<Integer, Integer> minMap, Map<Integer, int[]> oiMap) {
@@ -112,7 +121,15 @@ public class AOE {
         }
     }
 
-    private static void calActivity(int[][] graph2Matrix, Map<Integer, Integer> minMap, Map<Integer, Integer> maxMap) {
+    private static void calActivity(int[][] graph2Matrix, Map<int[], int[]> activityMM, Map<Integer, Integer> minMap, Map<Integer, Integer> maxMap) {
+        // activity.min = from.min
+        // activity.max = to.mac - activity.val
+        for (int from = 0; from < graph2Matrix.length; from++) {
+            for (int to = 0; to < graph2Matrix[from].length; to++) {
+                if (graph2Matrix[from][to] < 1) continue;
+                activityMM.put(new int[]{from, to}, new int[]{minMap.get(from + 1), maxMap.get(to + 1) - graph2Matrix[from][to]});
+            }
+        }
     }
 
     private static void printMatrix(int[][] matrix) {
