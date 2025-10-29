@@ -12,16 +12,18 @@ public class Shell {
 
     private static void sort(int[] arr) {
         int size = arr.length;
-        // 不断扩大排序组的元素数量
-        for (int part = size / 2; part >= 1; part /= 2) {
-            for (int index = part; index < size; index++) {
+        // 间隔定长截取集合进行选择排序，并通过不断缩小定长扩大筛选元素数量，对数据集进行排序
+        for (int gap = size / 2; gap >= 1; gap /= 2) {
+            // 从筛选后的第二项开始遍历
+            for (int index = gap; index < size; index++) {
+                // 插入排序
                 int temp = arr[index];
-                int j = index - part;
+                int j = index - gap;
                 while (j >= 0 && temp < arr[j]) {
-                    arr[j + part] = arr[j];
-                    j -= part;
+                    arr[j + gap] = arr[j];
+                    j -= gap;
                 }
-                arr[j + part] = temp;
+                arr[j + gap] = temp;
             }
         }
     }
