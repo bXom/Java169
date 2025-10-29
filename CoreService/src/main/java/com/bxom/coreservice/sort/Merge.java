@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Merge {
     public static void main(String[] args) {
-//        int[] arr = new int[]{4, 1, 55, 2, 15, 6, 74, 2, 5, 4, 5, 8888, 25, 64};
-        int[] arr = new int[]{3, 1, 2};
+        int[] arr = new int[]{4, 1, 55, 2, 15, 6, 74, 2, 5, 4, 5, 8888, 25, 64};
+//        int[] arr = new int[]{3, 1, 2, 4};
         sort(arr);
         log.info("result: {}", arr);
     }
@@ -15,30 +15,33 @@ public class Merge {
         int size = arr.length;
         // 待归并的两个集合元素步长,初始值为 1,依次翻倍
         int step = 1;
-        while (size >= step) {
+        while (size > step) {
             // 单次归并的两个集合的指针
             for (int index = 0; index < size; ) {
-                // 归并后得到的集合
-                int[] sorted = new int[2 * step];
                 // 子集合指针
                 int left = index;
                 int right = index + step;
-                for (int i = 0; (i < 2 * step); i++) {
-                    if (left < index + step && right < index + step * 2 && left < size && right < size) {
+                int leftEnd = Math.min(index + step, size);
+                int rightEnd = Math.min(index + step * 2, size);
+                // 归并后得到的集合
+                int subSize = rightEnd - index;
+                int[] sorted = new int[subSize];
+                for (int i = 0; i < subSize; i++) {
+                    if (left < leftEnd && right < rightEnd) {
                         if (arr[left] < arr[right]) {
                             sorted[i] = arr[left++];
                         } else {
                             sorted[i] = arr[right++];
                         }
-                    } else if (left < index + step && left < size) {
+                    } else if (left < leftEnd) {
                         sorted[i] = arr[left++];
-                    } else if (right < index + 2 * step && right < size) {
+                    } else if (right < rightEnd) {
                         sorted[i] = arr[right++];
                     }
                 }
                 // 覆盖原集合
-                for (int i = 0; i < 2 * step; i++) {
-                    if (index + i < size) arr[index + i] = sorted[i];
+                for (int i = 0; i < subSize; i++) {
+                    arr[index + i] = sorted[i];
                 }
                 index += 2 * step;
             }
