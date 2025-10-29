@@ -7,11 +7,12 @@ public class Merge {
     public static void main(String[] args) {
         int[] arr = new int[]{4, 1, 55, 2, 15, 6, 74, 2, 5, 4, 5, 8888, 25, 64};
 //        int[] arr = new int[]{3, 1, 2, 4};
-        sort(arr);
+//        sort1(arr);
+        sort2(arr, 0, arr.length);
         log.info("result: {}", arr);
     }
 
-    private static void sort(int[] arr) {
+    private static void sort1(int[] arr) {
         int size = arr.length;
         // 待归并的两个集合元素步长,初始值为 1,依次翻倍
         int step = 1;
@@ -46,6 +47,36 @@ public class Merge {
                 index += 2 * step;
             }
             step *= 2;
+        }
+    }
+
+    // 递归
+    private static void sort2(int[] arr, int start, int end) {
+        if (end - start < 2) {
+            return;
+        }
+        int mid = start + (end - start) / 2;
+        sort2(arr, start, mid);
+        sort2(arr, mid, end);
+        merge(arr, start, mid, end);
+    }
+
+    private static void merge(int[] arr, int start, int mid, int end) {
+        int left = start;
+        int right = mid;
+        int[] sorted = new int[end - start];
+        for (int i = start; i < end; i++) {
+            if (left < mid && right < end) {
+                if (arr[left] < arr[right]) sorted[i - start] = arr[left++];
+                else sorted[i - start] = arr[right++];
+            } else if (left < mid) {
+                sorted[i - start] = arr[left++];
+            } else if (right < end) {
+                sorted[i - start] = arr[right++];
+            }
+        }
+        for (int i = start; i < end; i++) {
+            arr[i] = sorted[i - start];
         }
     }
 }
