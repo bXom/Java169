@@ -29,21 +29,19 @@ public class Radix {
             }
         }
         while (base / 10 <= max) {
-            for (int i = 0; i < size; i++) {
-                int num = arr[i] / base % 10;
-                map.get(num).add(arr[i]);
+            for (int item : arr) {
+                int num = item / base % 10;
+                map.get(num).add(item);
             }
             Queue<Integer> result = new LinkedList<>();
             for (int i = 0; i < 10; i++) {
                 Queue<Integer> vList = map.get(i);
                 while (!vList.isEmpty()) {
-                    int val = vList.poll();
-                    result.add(val);
+                    result.add(vList.poll());
                 }
             }
             for (int i = 0; i < size; i++) {
-                int val = result.poll();
-                arr[i] = val;
+                arr[i] = result.poll();
             }
             base *= 10;
         }
