@@ -11,8 +11,8 @@ public class RedBlackTree {
         insert(2);
         log.info("root - {}", root);
         log.info("root.left - {}", root.left);
-//        log.info("root.right - {}", root.right);
-        log.info("root.left.left - {}", root.left.left);
+        log.info("root.right - {}", root.right);
+//        log.info("root.left.left - {}", root.left.left);
 //        delete(1);
     }
 
@@ -101,7 +101,6 @@ public class RedBlackTree {
      * @param node 插入节点 == 红色节点
      */
     private static void checkIsBlack(TreeNode node) {
-        log.info("checkIsBlack - node: {}", node);
         TreeNode parent = node.parent;
         // 根节点
         if (parent == null) {
@@ -113,17 +112,14 @@ public class RedBlackTree {
         if (parent.isBlack) return;
         // 插入节点为红色且父节点为红色
         TreeNode grand = parent.parent;
-        log.info("grand 1: {}", grand);
-        log.info("parent 1: {}", parent);
+        TreeNode grandP = grand.parent;
+        int grandIsLeft = grand.isLeft;
         TreeNode parentBeside = parent.isLeft == 1 ? grand.right : grand.left;
         if (parentBeside == null || parentBeside.isBlack) {
-//            TreeNode newGrand = null;
+            TreeNode newGrand = null;
             // 叔父节点为黑色或为空
             if (parent.isLeft == 1 && node.isLeft == 1) {
-                balaLL(parent);
-//                log.info("newGrand: {}", newGrand);
-//                log.info("newGrand.left: {}", newGrand.left);
-//                log.info("newGrand.right: {}", newGrand.right);
+                newGrand = balaLL(parent);
             } else if (parent.isLeft == 1 && node.isLeft == 0) {
                 balaLR(parent);
             } else if (parent.isLeft == 0 && node.isLeft == 1) {
@@ -131,14 +127,14 @@ public class RedBlackTree {
             } else {
                 balaRR(parent);
             }
-//            log.info("grand 2: {}", grand);
-//            if (grand.parent != null) {
-//                if (grand.isLeft == 1) grand.parent.left = newGrand;
-//            } else {
-//                newGrand.isLeft = -1;
-//                newGrand.isBlack = true;
-//                root = newGrand;
-//            }
+            if (grandP != null) {
+                if (grandIsLeft == 1) grandP.left = newGrand;
+                else if (grandIsLeft == 0) grandP.right = newGrand;
+            } else {
+                newGrand.isLeft = -1;
+                newGrand.isBlack = true;
+                root = newGrand;
+            }
         } else {
             // 父节点、叔父节点为红色，祖父节点为黑色，则父、叔父、祖父，颜色反向取色，再递归检查祖父节点
             parentBeside.isBlack = true;
@@ -148,8 +144,7 @@ public class RedBlackTree {
         }
     }
 
-    private static void balaLL(TreeNode parent) {
-        log.info("LL _ parent 1: {}", parent);
+    private static TreeNode balaLL(TreeNode parent) {
         TreeNode grand = parent.parent;
         TreeNode grandP = grand.parent;
         parent.parent = grandP;
@@ -168,11 +163,7 @@ public class RedBlackTree {
         grand.isBlack = !grand.isBlack;
         grand.isLeft = 0;
         parent.isBlack = !parent.isBlack;
-        log.info("LL _ grand: {}", grand);
-        log.info("LL _ parent: {}", parent);
-        if (parent.left != null) log.info("LL _ node: {}", parent.left);
-        else if (parent.right != null) log.info("LL _ node: {}", parent.right);
-//        return parent;
+        return parent;
     }
 
     private static void balaRR(TreeNode parent) {
