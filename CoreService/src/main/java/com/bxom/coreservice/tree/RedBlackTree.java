@@ -9,10 +9,10 @@ public class RedBlackTree {
         insert(5);
 //        insert(20);
         insert(2);
-        log.info("root - val: {}, isBlack: {}, isLeft: {}", root.value, root.isBlack, root.isLeft);
-        log.info("root.left - val: {}, isBlack: {}, isLeft: {}", root.left.value, root.left.isBlack, root.left.isLeft);
-//        log.info("root.right - val: {}, isBlack: {}, isLeft: {}", root.right.value, root.right.isBlack, root.right.isLeft);
-        log.info("root.left.left - val: {}, isBlack: {}, isLeft: {}", root.left.left.value, root.left.left.isBlack, root.left.left.isLeft);
+        log.info("root - {}", root);
+        log.info("root.left - {}", root.left);
+//        log.info("root.right - {}", root.right);
+        log.info("root.left.left - {}", root.left.left);
 //        delete(1);
     }
 
@@ -36,9 +36,24 @@ public class RedBlackTree {
             this.isBlack = isBlack;
             this.isLeft = isLeft;
         }
+
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("val: ").append(this.value)
+                    .append(", isBlack: ").append(this.isBlack)
+                    .append(", isLeft: ").append(this.isLeft);
+            if (this.parent != null) sb.append(", parent.val: ").append(parent.value);
+            else sb.append(", parent.val: null");
+            if (this.left != null) sb.append(", left.val: ").append(left.value);
+            else sb.append(", left.val: null");
+            if (this.right != null) sb.append(", right.val: ").append(right.value);
+            else sb.append(", right.val: null");
+            return sb.toString();
+        }
     }
 
     public static void insert(int val) {
+        // 写入根节点
         if (root == null) {
             root = new TreeNode(val, true, -1);
             return;
@@ -46,20 +61,28 @@ public class RedBlackTree {
         TreeNode node = root;
         while (true) {
             if (node.value > val) {
+                // 在左子树
                 if (node.left != null) {
+                    // 左子树不为空
                     node = node.left;
                 } else {
+                    // 左子树为空，写入
                     node.left = new TreeNode(val, 1);
                     node.left.parent = node;
+                    // 检查插入节点的红黑平衡规则
                     checkIsBlack(node.left);
                     return;
                 }
             } else if (node.value < val) {
+                // 在右子树
                 if (node.right != null) {
+                    // 右子树不为空
                     node = node.right;
                 } else {
+                    // 右子树为空，写入
                     node.right = new TreeNode(val, 0);
                     node.right.parent = node;
+                    // 检查插入节点的红黑平衡规则
                     checkIsBlack(node.right);
                     return;
                 }
@@ -71,41 +94,93 @@ public class RedBlackTree {
 
     }
 
+    /**
+     * 检查插入节点的红黑平衡规则
+     * 此刻的插入节点 == 红色节点
+     *
+     * @param node 插入节点 == 红色节点
+     */
     private static void checkIsBlack(TreeNode node) {
-        log.info("node.val: {}, isleft: {}, isblack: {}", node.value, node.isLeft, node.isBlack);
+        log.info("checkIsBlack - node: {}", node);
         TreeNode parent = node.parent;
+        // 根节点
         if (parent == null) {
             node.isBlack = true;
+            node.isLeft = -1;
             return;
         }
+        // 父节点是黑，直接退出
         if (parent.isBlack) return;
         // 插入节点为红色且父节点为红色
         TreeNode grand = parent.parent;
+        log.info("grand 1: {}", grand);
+        log.info("parent 1: {}", parent);
         TreeNode parentBeside = parent.isLeft == 1 ? grand.right : grand.left;
         if (parentBeside == null || parentBeside.isBlack) {
-            TreeNode newGrand = balaLL(parent);
-            if (grand.parent == null) root = newGrand;
-            else if (grand.isLeft == 1) grand.parent.left = newGrand;
-            else grand.parent.right = newGrand;
+//            TreeNode newGrand = null;
+            // 叔父节点为黑色或为空
+            if (parent.isLeft == 1 && node.isLeft == 1) {
+                balaLL(parent);
+//                log.info("newGrand: {}", newGrand);
+//                log.info("newGrand.left: {}", newGrand.left);
+//                log.info("newGrand.right: {}", newGrand.right);
+            } else if (parent.isLeft == 1 && node.isLeft == 0) {
+                balaLR(parent);
+            } else if (parent.isLeft == 0 && node.isLeft == 1) {
+                balaRL(parent);
+            } else {
+                balaRR(parent);
+            }
+//            log.info("grand 2: {}", grand);
+//            if (grand.parent != null) {
+//                if (grand.isLeft == 1) grand.parent.left = newGrand;
+//            } else {
+//                newGrand.isLeft = -1;
+//                newGrand.isBlack = true;
+//                root = newGrand;
+//            }
         } else {
-            // 父节点的兄弟节点也为红色，则父、叔、祖父，颜色倒置，再递归检查祖父节点
+            // 父节点、叔父节点为红色，祖父节点为黑色，则父、叔父、祖父，颜色反向取色，再递归检查祖父节点
             parentBeside.isBlack = true;
-            parent.isBlack = true;
-            grand.isBlack = false;
+            parent.isBlack = !parent.isBlack;
+            grand.isBlack = !grand.isBlack;
             checkIsBlack(grand);
         }
     }
 
-    private static TreeNode balaLL(TreeNode parent) {
+    private static void balaLL(TreeNode parent) {
+        log.info("LL _ parent 1: {}", parent);
         TreeNode grand = parent.parent;
-        parent.parent = grand.parent;
+        TreeNode grandP = grand.parent;
+        parent.parent = grandP;
         parent.right = grand;
 
         grand.parent = parent;
         grand.left = null;
+        if (grandP != null) {
+            if (grand.isLeft == 1) {
+                grandP.left = parent;
+            } else if (grand.isLeft == 0) {
+                grandP.right = parent;
+            }
+        }
 
         grand.isBlack = !grand.isBlack;
+        grand.isLeft = 0;
         parent.isBlack = !parent.isBlack;
-        return grand;
+        log.info("LL _ grand: {}", grand);
+        log.info("LL _ parent: {}", parent);
+        if (parent.left != null) log.info("LL _ node: {}", parent.left);
+        else if (parent.right != null) log.info("LL _ node: {}", parent.right);
+//        return parent;
+    }
+
+    private static void balaRR(TreeNode parent) {
+    }
+
+    private static void balaLR(TreeNode parent) {
+    }
+
+    private static void balaRL(TreeNode parent) {
     }
 }
