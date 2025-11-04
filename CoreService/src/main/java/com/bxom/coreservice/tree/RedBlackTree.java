@@ -121,7 +121,7 @@ public class RedBlackTree {
             if (parent.isLeft == 1 && node.isLeft == 1) {
                 newGrand = balaLL(parent);
             } else if (parent.isLeft == 1 && node.isLeft == 0) {
-                balaLR(parent);
+                newGrand = balaLR(parent);
             } else if (parent.isLeft == 0 && node.isLeft == 1) {
                 balaRL(parent);
             } else {
@@ -169,7 +169,11 @@ public class RedBlackTree {
     private static void balaRR(TreeNode parent) {
     }
 
-    private static void balaLR(TreeNode parent) {
+    private static TreeNode balaLR(TreeNode parent) {
+        TreeNode grand = parent.parent;
+        TreeNode grandP = grand.parent;
+
+        return parent;
     }
 
     private static void balaRL(TreeNode parent) {
