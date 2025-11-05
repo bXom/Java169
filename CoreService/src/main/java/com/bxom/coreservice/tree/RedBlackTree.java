@@ -11,14 +11,26 @@ public class RedBlackTree {
 
     private static void insertTesting() {
         root = null;
-        insert(70);
-        insert(40);
-        insert(100);
-        insert(20);
-        insert(50);
-        insert(10);
-        insert(150);
-        insert(120);
+        // error testing
+        insert(17);
+        insert(18);
+        insert(23);
+        insert(34);
+        insert(27);
+        insert(15);
+        insert(9);
+        insert(6);
+        insert(8);
+        insert(5);
+        insert(25);
+//        insert(70);
+//        insert(40);
+//        insert(100);
+//        insert(20);
+//        insert(50);
+//        insert(10);
+//        insert(150);
+//        insert(120);
         print("root", root);
     }
 
