@@ -8,7 +8,7 @@ public class RedBlackTree {
         insert(5);
 //        insert(20);
         insert(7);
-        insert(10);
+        insert(6);
         log.info("root - {}", root);
         log.info("root.left - {}", root.left);
         log.info("root.right - {}", root.right);
@@ -204,6 +204,25 @@ public class RedBlackTree {
     }
 
     private static TreeNode balaRL(TreeNode parent) {
-        return parent;
+        TreeNode node = parent.left;
+        TreeNode grand = parent.parent;
+        TreeNode grandP = grand.parent;
+        if (grandP != null) {
+            if (grand.isLeft == 1) grandP.left = node;
+            else if (grand.isLeft == 0) grandP.right = node;
+        }
+        node.parent = grandP;
+        node.right = parent;
+        node.left = grand;
+        node.isLeft = grand.isLeft;
+        parent.parent = node;
+        parent.left = null;
+        parent.isLeft = 0;
+        grand.parent = node;
+        grand.right = null;
+        grand.isLeft = 1;
+        grand.isBlack = false;
+        node.isBlack = true;
+        return node;
     }
 }
