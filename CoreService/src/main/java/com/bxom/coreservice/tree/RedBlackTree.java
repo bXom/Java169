@@ -5,14 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RedBlackTree {
     public static void main(String[] args) {
+        insert(70);
+        insert(20);
+        insert(80);
+        insert(10);
         insert(5);
-//        insert(20);
-        insert(7);
-        insert(6);
-        log.info("root - {}", root);
-        log.info("root.left - {}", root.left);
-        log.info("root.right - {}", root.right);
-//        log.info("root.left.left - {}", root.left.left);
+        print("root", root);
 //        delete(1);
     }
 
@@ -50,6 +48,12 @@ public class RedBlackTree {
             else sb.append(", right.val: null");
             return sb.toString();
         }
+    }
+
+    private static void print(String name, TreeNode node) {
+        log.info("{} - {}", name, node);
+        if (node.left != null) print(name + ".left", node.left);
+        if (node.right != null) print(name + ".right", node.right);
     }
 
     public static void insert(int val) {
@@ -116,14 +120,14 @@ public class RedBlackTree {
         int grandIsLeft = grand.isLeft;
         TreeNode parentBeside = parent.isLeft == 1 ? grand.right : grand.left;
         if (parentBeside == null || parentBeside.isBlack) {
-            TreeNode newGrand = null;
             // 叔父节点为黑色或为空
+            TreeNode newGrand = null;
             if (parent.isLeft == 1) {
-                if (node.isLeft == 1) newGrand = balaLL(parent);
-                else if (node.isLeft == 0) newGrand = balaLR(parent);
+                if (node.isLeft == 1) newGrand = balaLL(parent, grand);
+                else if (node.isLeft == 0) newGrand = balaLR(parent, grand);
             } else if (parent.isLeft == 0) {
-                if (node.isLeft == 1) newGrand = balaRL(parent);
-                else if (node.isLeft == 0) newGrand = balaRR(parent);
+                if (node.isLeft == 1) newGrand = balaRL(parent, grand);
+                else if (node.isLeft == 0) newGrand = balaRR(parent, grand);
             }
             if (grandP != null) {
                 if (grandIsLeft == 1) grandP.left = newGrand;
@@ -142,33 +146,20 @@ public class RedBlackTree {
         }
     }
 
-    private static TreeNode balaLL(TreeNode parent) {
-        TreeNode grand = parent.parent;
-        TreeNode grandP = grand.parent;
-        parent.parent = grandP;
+    private static TreeNode balaLL(TreeNode parent, TreeNode grand) {
+        parent.parent = grand.parent;
         parent.right = grand;
-
+        parent.isLeft = grand.isLeft;
         grand.parent = parent;
         grand.left = null;
-        if (grandP != null) {
-            if (grand.isLeft == 1) grandP.left = parent;
-            else if (grand.isLeft == 0) grandP.right = parent;
-        }
-
-        grand.isBlack = !grand.isBlack;
         grand.isLeft = 0;
-        parent.isBlack = !parent.isBlack;
+        parent.isBlack = true;
+        grand.isBlack = false;
         return parent;
     }
 
-    private static TreeNode balaRR(TreeNode parent) {
-        TreeNode grand = parent.parent;
-        TreeNode grandP = grand.parent;
-        if (grandP != null) {
-            if (grand.isLeft == 1) grandP.left = parent;
-            else if (grand.isLeft == 0) grandP.right = parent;
-        }
-        parent.parent = grandP;
+    private static TreeNode balaRR(TreeNode parent, TreeNode grand) {
+        parent.parent = grand.parent;
         parent.left = grand;
         parent.isLeft = grand.isLeft;
         grand.parent = parent;
@@ -179,15 +170,9 @@ public class RedBlackTree {
         return parent;
     }
 
-    private static TreeNode balaLR(TreeNode parent) {
+    private static TreeNode balaLR(TreeNode parent, TreeNode grand) {
         TreeNode node = parent.right;
-        TreeNode grand = parent.parent;
-        TreeNode grandP = grand.parent;
-        if (grandP != null) {
-            if (grand.isLeft == 1) grandP.left = node;
-            else if (grand.isLeft == 0) grandP.right = node;
-        }
-        node.parent = grandP;
+        node.parent = grand.parent;
         node.left = parent;
         node.right = grand;
         node.isLeft = grand.isLeft;
@@ -198,20 +183,13 @@ public class RedBlackTree {
         grand.left = null;
         grand.isLeft = 0;
         node.isBlack = true;
-        parent.isBlack = false;
         grand.isBlack = false;
         return node;
     }
 
-    private static TreeNode balaRL(TreeNode parent) {
+    private static TreeNode balaRL(TreeNode parent, TreeNode grand) {
         TreeNode node = parent.left;
-        TreeNode grand = parent.parent;
-        TreeNode grandP = grand.parent;
-        if (grandP != null) {
-            if (grand.isLeft == 1) grandP.left = node;
-            else if (grand.isLeft == 0) grandP.right = node;
-        }
-        node.parent = grandP;
+        node.parent = grand.parent;
         node.right = parent;
         node.left = grand;
         node.isLeft = grand.isLeft;
