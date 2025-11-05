@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RedBlackTree {
     public static void main(String[] args) {
-        insert(10);
         insert(5);
 //        insert(20);
         insert(7);
+        insert(10);
         log.info("root - {}", root);
         log.info("root.left - {}", root.left);
         log.info("root.right - {}", root.right);
@@ -162,6 +162,20 @@ public class RedBlackTree {
     }
 
     private static TreeNode balaRR(TreeNode parent) {
+        TreeNode grand = parent.parent;
+        TreeNode grandP = grand.parent;
+        if (grandP != null) {
+            if (grand.isLeft == 1) grandP.left = parent;
+            else if (grand.isLeft == 0) grandP.right = parent;
+        }
+        parent.parent = grandP;
+        parent.left = grand;
+        parent.isLeft = grand.isLeft;
+        grand.parent = parent;
+        grand.right = null;
+        grand.isLeft = 1;
+        parent.isBlack = true;
+        grand.isBlack = false;
         return parent;
     }
 
