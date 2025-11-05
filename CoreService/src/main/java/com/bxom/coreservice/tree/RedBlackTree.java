@@ -118,14 +118,12 @@ public class RedBlackTree {
         if (parentBeside == null || parentBeside.isBlack) {
             TreeNode newGrand = null;
             // 叔父节点为黑色或为空
-            if (parent.isLeft == 1 && node.isLeft == 1) {
-                newGrand = balaLL(parent);
-            } else if (parent.isLeft == 1 && node.isLeft == 0) {
-                newGrand = balaLR(parent);
-            } else if (parent.isLeft == 0 && node.isLeft == 1) {
-                balaRL(parent);
-            } else {
-                balaRR(parent);
+            if (parent.isLeft == 1) {
+                if (node.isLeft == 1) newGrand = balaLL(parent);
+                else if (node.isLeft == 0) newGrand = balaLR(parent);
+            } else if (parent.isLeft == 0) {
+                if (node.isLeft == 1) newGrand = balaRL(parent);
+                else if (node.isLeft == 0) newGrand = balaRR(parent);
             }
             if (grandP != null) {
                 if (grandIsLeft == 1) grandP.left = newGrand;
@@ -153,11 +151,8 @@ public class RedBlackTree {
         grand.parent = parent;
         grand.left = null;
         if (grandP != null) {
-            if (grand.isLeft == 1) {
-                grandP.left = parent;
-            } else if (grand.isLeft == 0) {
-                grandP.right = parent;
-            }
+            if (grand.isLeft == 1) grandP.left = parent;
+            else if (grand.isLeft == 0) grandP.right = parent;
         }
 
         grand.isBlack = !grand.isBlack;
@@ -166,15 +161,18 @@ public class RedBlackTree {
         return parent;
     }
 
-    private static void balaRR(TreeNode parent) {
+    private static TreeNode balaRR(TreeNode parent) {
+        return parent;
     }
 
     private static TreeNode balaLR(TreeNode parent) {
         TreeNode node = parent.right;
         TreeNode grand = parent.parent;
         TreeNode grandP = grand.parent;
-        if (grandP != null && grand.isLeft == 1) grandP.left = node;
-        else if (grandP != null && grand.isLeft == 0) grandP.right = node;
+        if (grandP != null) {
+            if (grand.isLeft == 1) grandP.left = node;
+            else if (grand.isLeft == 0) grandP.right = node;
+        }
         node.parent = grandP;
         node.left = parent;
         node.right = grand;
@@ -191,6 +189,7 @@ public class RedBlackTree {
         return node;
     }
 
-    private static void balaRL(TreeNode parent) {
+    private static TreeNode balaRL(TreeNode parent) {
+        return parent;
     }
 }
