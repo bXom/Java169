@@ -5,13 +5,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RedBlackTree {
     public static void main(String[] args) {
-        insert(70);
-        insert(20);
-        insert(80);
-        insert(10);
-        insert(5);
-        print("root", root);
+        insertTesting();
 //        delete(1);
+    }
+
+    private static void insertTesting() {
+        root = null;
+        insert(70);
+        insert(40);
+        insert(100);
+        insert(20);
+        insert(50);
+        insert(10);
+        insert(150);
+        insert(120);
+        print("root", root);
     }
 
     private static TreeNode root;
