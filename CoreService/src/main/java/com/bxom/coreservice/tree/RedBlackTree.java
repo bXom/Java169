@@ -11,7 +11,8 @@ public class RedBlackTree {
 
     private static void insertTesting() {
         root = null;
-        // error testing
+
+        // testing 2
         insert(17);
         insert(18);
         insert(23);
@@ -23,14 +24,16 @@ public class RedBlackTree {
         insert(8);
         insert(5);
         insert(25);
-//        insert(70);
-//        insert(40);
-//        insert(100);
-//        insert(20);
-//        insert(50);
-//        insert(10);
-//        insert(150);
-//        insert(120);
+
+        // testing 1
+        // insert(70);
+        // insert(40);
+        // insert(100);
+        // insert(20);
+        // insert(50);
+        // insert(10);
+        // insert(150);
+        // insert(120);
         print("root", root);
     }
 
@@ -43,11 +46,6 @@ public class RedBlackTree {
         private TreeNode left;
         private TreeNode right;
         private TreeNode parent;
-
-        public TreeNode(int value, int isLeft) {
-            this.value = value;
-            this.isLeft = isLeft;
-        }
 
         public TreeNode(int value, boolean isBlack, int isLeft) {
             this.value = value;
@@ -84,27 +82,30 @@ public class RedBlackTree {
         }
         TreeNode node = root;
         while (true) {
-            if (node.value > val) {
+            // 跳过相等值
+            if (node.value == val) {
+                return;
+            } else if (node.value > val) {
                 // 在左子树
                 if (node.left != null) {
                     // 左子树不为空
                     node = node.left;
                 } else {
                     // 左子树为空，写入
-                    node.left = new TreeNode(val, 1);
+                    node.left = new TreeNode(val, false, 1);
                     node.left.parent = node;
                     // 检查插入节点的红黑平衡规则
                     checkIsBlack(node.left);
                     return;
                 }
-            } else if (node.value < val) {
+            } else {// node.value < val
                 // 在右子树
                 if (node.right != null) {
                     // 右子树不为空
                     node = node.right;
                 } else {
                     // 右子树为空，写入
-                    node.right = new TreeNode(val, 0);
+                    node.right = new TreeNode(val, false, 0);
                     node.right.parent = node;
                     // 检查插入节点的红黑平衡规则
                     checkIsBlack(node.right);
@@ -138,7 +139,7 @@ public class RedBlackTree {
         TreeNode grand = parent.parent;
         TreeNode grandP = grand.parent;
         int grandIsLeft = grand.isLeft;
-        TreeNode parentBeside = parent.isLeft == 1 ? grand.right : grand.left;
+        TreeNode parentBeside = (parent.isLeft == 1) ? grand.right : grand.left;
         if (parentBeside == null || parentBeside.isBlack) {
             // 叔父节点为黑色或为空
             TreeNode newGrand = null;
@@ -153,38 +154,52 @@ public class RedBlackTree {
                 if (grandIsLeft == 1) grandP.left = newGrand;
                 else if (grandIsLeft == 0) grandP.right = newGrand;
             } else {
+                root = newGrand;
                 newGrand.isLeft = -1;
                 newGrand.isBlack = true;
-                root = newGrand;
             }
         } else {
             // 父节点、叔父节点为红色，祖父节点为黑色，则父、叔父、祖父，颜色反向取色，再递归检查祖父节点
             parentBeside.isBlack = true;
-            parent.isBlack = !parent.isBlack;
-            grand.isBlack = !grand.isBlack;
+            parent.isBlack = true;
+            grand.isBlack = false;
             checkIsBlack(grand);
         }
     }
 
     private static TreeNode balaLL(TreeNode parent, TreeNode grand) {
+        TreeNode parentR = parent.right;
         parent.parent = grand.parent;
         parent.right = grand;
         parent.isLeft = grand.isLeft;
+
         grand.parent = parent;
-        grand.left = null;
+        grand.left = parentR;
         grand.isLeft = 0;
+        if (parentR != null) {
+            parentR.isLeft = 1;
+            parentR.parent = grand;
+        }
+
         parent.isBlack = true;
         grand.isBlack = false;
         return parent;
     }
 
     private static TreeNode balaRR(TreeNode parent, TreeNode grand) {
+        TreeNode parentL = parent.left;
         parent.parent = grand.parent;
         parent.left = grand;
         parent.isLeft = grand.isLeft;
+
         grand.parent = parent;
-        grand.right = null;
+        grand.right = parentL;
         grand.isLeft = 1;
+        if (parentL != null) {
+            parentL.isLeft = 0;
+            parentL.parent = grand;
+        }
+
         parent.isBlack = true;
         grand.isBlack = false;
         return parent;
@@ -192,16 +207,30 @@ public class RedBlackTree {
 
     private static TreeNode balaLR(TreeNode parent, TreeNode grand) {
         TreeNode node = parent.right;
+        TreeNode nodeLeft = node.left;
+        TreeNode nodeRight = node.right;
+
         node.parent = grand.parent;
         node.left = parent;
         node.right = grand;
         node.isLeft = grand.isLeft;
+
         parent.parent = node;
-        parent.right = null;
         parent.isLeft = 1;
+        parent.right = nodeLeft;
+        if (nodeLeft != null) {
+            nodeLeft.isLeft = 0;
+            nodeLeft.parent = parent;
+        }
+
         grand.parent = node;
-        grand.left = null;
         grand.isLeft = 0;
+        grand.left = nodeRight;
+        if (nodeRight != null) {
+            nodeRight.isLeft = 1;
+            nodeRight.parent = grand;
+        }
+
         node.isBlack = true;
         grand.isBlack = false;
         return node;
@@ -209,16 +238,30 @@ public class RedBlackTree {
 
     private static TreeNode balaRL(TreeNode parent, TreeNode grand) {
         TreeNode node = parent.left;
+        TreeNode nodeLeft = node.left;
+        TreeNode nodeRight = node.right;
+
         node.parent = grand.parent;
         node.right = parent;
         node.left = grand;
         node.isLeft = grand.isLeft;
+
         parent.parent = node;
-        parent.left = null;
         parent.isLeft = 0;
+        parent.left = nodeRight;
+        if (nodeRight != null) {
+            nodeRight.isLeft = 1;
+            nodeRight.parent = parent;
+        }
+
         grand.parent = node;
-        grand.right = null;
         grand.isLeft = 1;
+        grand.right = nodeLeft;
+        if (nodeLeft != null) {
+            nodeLeft.isLeft = 0;
+            nodeLeft.parent = grand;
+        }
+
         grand.isBlack = false;
         node.isBlack = true;
         return node;
