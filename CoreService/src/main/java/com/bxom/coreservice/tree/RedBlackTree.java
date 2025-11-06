@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RedBlackTree {
     public static void main(String[] args) {
         insertTesting();
-//        delete(1);
+        deleteTesting();
     }
 
     private static void insertTesting() {
@@ -34,6 +34,21 @@ public class RedBlackTree {
         // insert(10);
         // insert(150);
         // insert(120);
+        print("root", root);
+    }
+
+    private static void deleteTesting() {
+        insert(17);
+//        insert(18);
+//        insert(23);
+//        insert(34);
+//        insert(27);
+//        insert(15);
+//        insert(9);
+//        insert(6);
+//        insert(8);
+//        insert(5);
+//        insert(25);
         print("root", root);
     }
 
@@ -116,7 +131,74 @@ public class RedBlackTree {
     }
 
     public static void delete(int val) {
+        TreeNode node = root;
+        if (node != null) {
+            if (node.value > val) {
+                node = node.left;
+            } else if (node.value < val) {
+                node = node.right;
+            } else {
+                // 无子节点
+                if (node.left == null && node.right == null) {
+                    TreeNode parent = node.parent;
+                    // 根节点
+                    if (parent == null) {
+                        root = null;
+                        return;
+                    }
+                    if (parent.left == node) {
+                        parent.left = null;
+                        return;
+                    }
+                    parent.right = null;
+                    return;
+                } else if (node.left == null) {
+                    // 只有右子树
+                    TreeNode parent = node.parent;
+                    if (parent.left == node) {
+                        parent.left = node.right;
+                        node.right.parent = parent;
+                        return;
+                    }
+                    parent.right = node.right;
+                    node.right.parent = parent;
+                    return;
+                } else if (node.right == null) {
+                    // 只有左子树
+                    TreeNode parent = node.parent;
+                    if (parent.left == node) {
+                        parent.left = node.left;
+                        node.left.parent = parent;
+                        return;
+                    }
+                    parent.right = node.left;
+                    node.left.parent = parent;
+                    return;
+                } else {
+                    insteadByLeftBiggest(node);
+//                    insteadByRightSmallest(node);
+                }
+            }
+        }
+        log.error("{} does not exist", val);
+    }
 
+    private static void insteadByLeftBiggest(TreeNode node) {
+        TreeNode parent = node.parent;
+        TreeNode nLeft = node.left;
+        TreeNode biggestN = nLeft;
+        TreeNode nRight = node.right;
+        while (biggestN.right != null) {
+            biggestN = biggestN.right;
+        }
+        if (parent != null) {
+            if (node == parent.left) parent.left = biggestN;
+            else parent.right = biggestN;
+        }
+
+    }
+
+    private static void insteadByRightSmallest(TreeNode node) {
     }
 
     /**
