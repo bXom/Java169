@@ -162,6 +162,7 @@ public class RedBlackTree {
                     }
                     parent.right = node.right;
                     node.right.parent = parent;
+                    if (node.isBlack) removeBlackNode(node);
                     return;
                 } else if (node.right == null) {
                     // 只有左子树
@@ -175,30 +176,42 @@ public class RedBlackTree {
                     node.left.parent = parent;
                     return;
                 } else {
-                    insteadByLeftBiggest(node);
-//                    insteadByRightSmallest(node);
+                    // 以查找左子树的最大值为例；也可以找右子树的最小值
+                    TreeNode biggestLeftSub = node.left;
+                    while (biggestLeftSub.right != null) {
+                        biggestLeftSub = biggestLeftSub.right;
+                    }
+                    // 无子节点
+                    if (biggestLeftSub.left == null) {
+                        if (biggestLeftSub.isBlack) {
+                            removeBlackNode(node);
+                        } else {
+                            // 红节点，直接替换 node 的 value
+                            node.value = biggestLeftSub.value;
+                            if (biggestLeftSub.isLeft == 1) biggestLeftSub.parent.left = null;
+                            else if (biggestLeftSub.isLeft == 0) biggestLeftSub.parent.right = null;
+                            return;
+                        }
+                    } else {
+                        // 有子节点点且只能是红色左子节点
+                        // 替换 node 的 value
+                        node.value = biggestLeftSub.value;
+                        // 修改被删除节点的父节点与被删除节点的左子节点的链接关系、颜色
+                        TreeNode biggestP = biggestLeftSub.parent;
+                        TreeNode biggestL = biggestLeftSub.left;
+                        biggestP.right = biggestL;
+                        biggestL.parent = biggestP;
+                        biggestL.isBlack = true;
+                        biggestL.isLeft = 0;
+                    }
                 }
             }
         }
         log.error("{} does not exist", val);
     }
 
-    private static void insteadByLeftBiggest(TreeNode node) {
-        TreeNode parent = node.parent;
-        TreeNode nLeft = node.left;
-        TreeNode biggestN = nLeft;
-        TreeNode nRight = node.right;
-        while (biggestN.right != null) {
-            biggestN = biggestN.right;
-        }
-        if (parent != null) {
-            if (node == parent.left) parent.left = biggestN;
-            else parent.right = biggestN;
-        }
+    private static void removeBlackNode(TreeNode node) {
 
-    }
-
-    private static void insteadByRightSmallest(TreeNode node) {
     }
 
     /**
