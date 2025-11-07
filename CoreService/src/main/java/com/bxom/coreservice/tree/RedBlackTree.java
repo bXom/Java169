@@ -148,32 +148,22 @@ public class RedBlackTree {
                     }
                     if (parent.left == node) {
                         parent.left = null;
-                        return;
+                    } else {
+                        parent.right = null;
                     }
-                    parent.right = null;
-                    return;
-                } else if (node.left == null) {
-                    // 只有右子树
-                    TreeNode parent = node.parent;
-                    if (parent.left == node) {
-                        parent.left = node.right;
-                        node.right.parent = parent;
-                        return;
-                    }
-                    parent.right = node.right;
-                    node.right.parent = parent;
                     if (node.isBlack) removeBlackNode(node);
                     return;
+                } else if (node.left == null) {
+                    // 只有右子树 == 右子树只能是一个红色节点
+                    node.right.parent = null;
+                    node.value = node.right.value;
+                    node.right = null;
+                    return;
                 } else if (node.right == null) {
-                    // 只有左子树
-                    TreeNode parent = node.parent;
-                    if (parent.left == node) {
-                        parent.left = node.left;
-                        node.left.parent = parent;
-                        return;
-                    }
-                    parent.right = node.left;
-                    node.left.parent = parent;
+                    // 只有左子树 == 左子树只能是一个红色节点
+                    node.left.parent = null;
+                    node.value = node.left.value;
+                    node.left = null;
                     return;
                 } else {
                     // 以查找左子树的最大值为例；也可以找右子树的最小值
