@@ -132,7 +132,7 @@ public class RedBlackTree {
 
     public static void delete(int val) {
         TreeNode node = root;
-        if (node != null) {
+        while (node != null) {
             if (node.value > val) {
                 node = node.left;
             } else if (node.value < val) {
@@ -144,27 +144,25 @@ public class RedBlackTree {
                     // 根节点
                     if (parent == null) {
                         root = null;
-                        return;
-                    }
-                    if (node.isBlack) {
-                        removeBlackNode(node);
                     } else {
+                        // 替换 node 的值
                         if (parent.left == node) parent.left = null;
                         else parent.right = null;
+                        // 当节点为黑节点，进行旋转
+                        if (node.isBlack) {
+                            removeBlackNode(node);
+                        }
                     }
-                    return;
                 } else if (node.left == null) {
                     // 只有右子树 == 右子树只能是一个红色节点
                     node.right.parent = null;
                     node.value = node.right.value;
                     node.right = null;
-                    return;
                 } else if (node.right == null) {
                     // 只有左子树 == 左子树只能是一个红色节点
                     node.left.parent = null;
                     node.value = node.left.value;
                     node.left = null;
-                    return;
                 } else {
                     // 以查找左子树的最大值为例；也可以找右子树的最小值
                     TreeNode biggestLeftSub = node.left;
@@ -173,14 +171,13 @@ public class RedBlackTree {
                     }
                     // 无子节点
                     if (biggestLeftSub.left == null) {
+                        // 替换 node 的值
+                        node.value = biggestLeftSub.value;
+                        if (biggestLeftSub.isLeft == 1) biggestLeftSub.parent.left = null;
+                        else if (biggestLeftSub.isLeft == 0) biggestLeftSub.parent.right = null;
+                        // 当节点为黑节点，进行旋转
                         if (biggestLeftSub.isBlack) {
-                            removeBlackNode(node);
-                        } else {
-                            // 红节点，直接替换 node 的 value
-                            node.value = biggestLeftSub.value;
-                            if (biggestLeftSub.isLeft == 1) biggestLeftSub.parent.left = null;
-                            else if (biggestLeftSub.isLeft == 0) biggestLeftSub.parent.right = null;
-                            return;
+                            removeBlackNode(biggestLeftSub);
                         }
                     } else {
                         // 有子节点点且只能是红色左子节点
@@ -201,7 +198,17 @@ public class RedBlackTree {
     }
 
     private static void removeBlackNode(TreeNode node) {
+        TreeNode parent = node.parent;
+        TreeNode bro = node.isLeft == 1 ? parent.right : parent.left;
+        if (bro == null || bro.isBlack) {
+            if ((bro.left == null || bro.left.isBlack) && (bro.right == null || bro.right.isBlack)) {
 
+            } else {
+
+            }
+        } else {
+
+        }
     }
 
     /**
