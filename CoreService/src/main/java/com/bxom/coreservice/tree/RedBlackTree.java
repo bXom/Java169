@@ -146,12 +146,12 @@ public class RedBlackTree {
                         root = null;
                         return;
                     }
-                    if (parent.left == node) {
-                        parent.left = null;
+                    if (node.isBlack) {
+                        removeBlackNode(node);
                     } else {
-                        parent.right = null;
+                        if (parent.left == node) parent.left = null;
+                        else parent.right = null;
                     }
-                    if (node.isBlack) removeBlackNode(node);
                     return;
                 } else if (node.left == null) {
                     // 只有右子树 == 右子树只能是一个红色节点
