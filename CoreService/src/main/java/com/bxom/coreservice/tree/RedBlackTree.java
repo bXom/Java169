@@ -199,16 +199,121 @@ public class RedBlackTree {
 
     private static void removeBlackNode(TreeNode node) {
         TreeNode parent = node.parent;
+        TreeNode grand = parent.parent;
         TreeNode bro = node.isLeft == 1 ? parent.right : parent.left;
-        if (bro == null || bro.isBlack) {
+        // 根据红黑树特性，因为 node 是黑节点，所以必有兄弟节点
+        if (bro.isBlack) {
+            // 根据红黑树性质永远不会存在单黑子节点
+            // 双黑子节点
             if ((bro.left == null || bro.left.isBlack) && (bro.right == null || bro.right.isBlack)) {
 
             } else {
-
+                // 一个红色子节点 或 两个红色子节点
+                if (bro.left != null && !bro.left.isBlack) {
+                    // 红色左子节点
+                    if (bro.isLeft == 1) {
+                        balaLLByBro(grand, parent, bro);
+                    } else {
+                        balaLRByBro(grand, parent, bro);
+                    }
+                } else {
+                    // 红色右子节点
+                    if (bro.isLeft == 1) {
+                        balaRLByBro(grand, parent, bro);
+                    } else {
+                        balaRRByBro(grand, parent, bro);
+                    }
+                }
             }
         } else {
 
         }
+    }
+
+    private static void balaLLByBro(TreeNode parent, TreeNode grand, TreeNode bro) {
+        bro.left.isBlack = bro.isBlack;
+        bro.isBlack = parent.isBlack;
+        parent.isBlack = true;
+        TreeNode broR = bro.right;
+        if (broR != null) {
+            broR.parent = parent;
+            broR.isLeft = 1;
+        }
+        parent.left = broR;
+        parent.right = null;
+        parent.parent = bro;
+        int isLeft = parent.isLeft;
+        parent.isLeft = 0;
+        bro.right = parent;
+        if (isLeft == -1) root = bro;
+        else if (isLeft == 1) grand.left = bro;
+        else grand.right = bro;
+    }
+
+    private static void balaRRByBro(TreeNode parent, TreeNode grand, TreeNode bro) {
+        bro.right.isBlack = bro.isBlack;
+        bro.isBlack = parent.isBlack;
+        parent.isBlack = true;
+        TreeNode broL = bro.left;
+        if (broL != null) {
+            broL.parent = parent;
+            broL.isLeft = 0;
+        }
+        parent.parent = bro;
+        parent.right = broL;
+        parent.left = null;
+        int isLeft = parent.isLeft;
+        parent.isLeft = 1;
+        bro.left = parent;
+        if (isLeft == -1) root = bro;
+        else if (isLeft == 1) grand.left = bro;
+        else grand.right = bro;
+    }
+
+    private static void balaLRByBro(TreeNode parent, TreeNode grand, TreeNode bro) {
+        int isLeft = parent.isLeft;
+        TreeNode sub = bro.right;
+        bro.right.isBlack = parent.isBlack;
+        parent.isBlack = true;
+
+        bro.parent = sub;
+        bro.left = null;
+        bro.right = parent;
+        bro.isLeft = 1;
+        parent.parent = sub;
+        parent.left = null;
+        parent.right = null;
+        parent.isLeft = 0;
+        sub.parent = grand;
+        sub.left = bro;
+        sub.right = parent;
+        sub.isLeft = isLeft;
+        if (isLeft == -1) root = sub;
+        else if (isLeft == 1) grand.left = sub;
+        else grand.right = sub;
+    }
+
+    private static void balaRLByBro(TreeNode parent, TreeNode grand, TreeNode bro) {
+        int isLeft = parent.isLeft;
+        TreeNode sub = bro.left;
+        bro.left.isBlack = parent.isBlack;
+        parent.isBlack = true;
+
+        bro.parent = sub;
+        bro.left = null;
+        bro.right = null;
+        bro.isLeft = 0;
+        parent.parent = sub;
+        parent.left = null;
+        parent.right = null;
+        parent.isLeft = 1;
+        sub.parent = grand;
+        sub.left = parent;
+        sub.right = bro;
+        sub.isLeft = isLeft;
+        if (isLeft == -1) root = sub;
+        else if (isLeft == 1) grand.left = sub;
+        else grand.right = sub;
     }
 
     /**
