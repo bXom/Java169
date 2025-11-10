@@ -150,7 +150,10 @@ public class RedBlackTree {
                         else parent.right = null;
                         // 当节点为黑节点，进行旋转
                         if (node.isBlack) {
-                            removeBlackNode(node);
+                            // TODO:
+                            TreeNode grand = parent.parent;
+                            TreeNode bro = node.isLeft == 1 ? parent.right : parent.left;
+                            checkBNodeByBro(node, parent, grand, bro);
                         }
                     }
                 } else if (node.left == null) {
@@ -177,7 +180,11 @@ public class RedBlackTree {
                         else if (biggestLeftSub.isLeft == 0) biggestLeftSub.parent.right = null;
                         // 当节点为黑节点，进行旋转
                         if (biggestLeftSub.isBlack) {
-                            removeBlackNode(biggestLeftSub);
+                            // TODO:
+                            TreeNode biggestLeftSubParent = biggestLeftSub.parent;
+                            TreeNode grand = biggestLeftSub.parent.parent;
+                            TreeNode bro = biggestLeftSub.isLeft == 1 ? biggestLeftSubParent.right : biggestLeftSubParent.left;
+                            checkBNodeByBro(biggestLeftSub, biggestLeftSubParent, grand, bro);
                         }
                     } else {
                         // 有子节点点且只能是红色左子节点
@@ -197,16 +204,23 @@ public class RedBlackTree {
         log.error("{} does not exist", val);
     }
 
-    private static void removeBlackNode(TreeNode node) {
-        TreeNode parent = node.parent;
-        TreeNode grand = parent.parent;
-        TreeNode bro = node.isLeft == 1 ? parent.right : parent.left;
+    // TODO:
+    private static void checkBNodeByBro(TreeNode node, TreeNode parent, TreeNode grand, TreeNode bro) {
         // 根据红黑树特性，因为 node 是黑节点，所以必有兄弟节点
         if (bro.isBlack) {
             // 根据红黑树性质永远不会存在单黑子节点
             // 双黑子节点
             if ((bro.left == null || bro.left.isBlack) && (bro.right == null || bro.right.isBlack)) {
-
+                bro.isBlack = false;
+                if (root.value == parent.value || !parent.isBlack) {
+                    bro.isBlack = true;
+                } else {
+                    // TODO:
+                    TreeNode pp = parent.parent;
+                    TreeNode pg = pp == null ? null : pp.parent;
+                    TreeNode ppBro = pp == null ? null : (parent.isLeft == 1 ? parent.parent.right : parent.parent.left);
+                    checkBNodeByBro(parent, pp, pg, ppBro);
+                }
             } else {
                 // 一个红色子节点 或 两个红色子节点
                 if (bro.left != null && !bro.left.isBlack) {
@@ -226,11 +240,52 @@ public class RedBlackTree {
                 }
             }
         } else {
-
+            // 兄弟为红色，则先将父、兄变色
+            bro.isBlack = true;
+            parent.isBlack = false;
+            // 将父向节点旋转
+            if (node.isLeft == 1) {
+                // 左旋
+                TreeNode broL = bro.left;
+                int isLeft = parent.isLeft;
+                parent.left = null;
+                parent.right = broL;
+                parent.parent = bro;
+                parent.isLeft = 1;
+                broL.parent = parent;
+                broL.isLeft = 0;
+                bro.left = parent;
+                bro.parent = grand;
+                bro.isLeft = isLeft;
+                if (isLeft == -1) root = bro;
+                else if (isLeft == 0) grand.right = bro;
+                else grand.left = bro;
+                // TODO: 此时 node 可能已经被删除，需要校验兄弟
+                // checkBNodeByBro(node,);
+            } else {
+                // 右旋
+                TreeNode broR = bro.right;
+                int isLeft = parent.isLeft;
+                parent.left = broR;
+                parent.right = null;
+                parent.parent = bro;
+                parent.isLeft = 0;
+                broR.parent = parent;
+                ;
+                broR.isLeft = 1;
+                bro.right = parent;
+                bro.parent = grand;
+                bro.isLeft = isLeft;
+                if (isLeft == -1) root = bro;
+                else if (isLeft == 0) grand.right = bro;
+                else grand.left = bro;
+                // TODO: 此时 node 可能已经被删除，需要校验兄弟
+                // checkBNodeByBro(node,);
+            }
         }
     }
 
-    private static void balaLLByBro(TreeNode parent, TreeNode grand, TreeNode bro) {
+    private static void balaLLByBro(TreeNode grand, TreeNode parent, TreeNode bro) {
         bro.left.isBlack = bro.isBlack;
         bro.isBlack = parent.isBlack;
         parent.isBlack = true;
@@ -250,7 +305,7 @@ public class RedBlackTree {
         else grand.right = bro;
     }
 
-    private static void balaRRByBro(TreeNode parent, TreeNode grand, TreeNode bro) {
+    private static void balaRRByBro(TreeNode grand, TreeNode parent, TreeNode bro) {
         bro.right.isBlack = bro.isBlack;
         bro.isBlack = parent.isBlack;
         parent.isBlack = true;
@@ -270,7 +325,7 @@ public class RedBlackTree {
         else grand.right = bro;
     }
 
-    private static void balaLRByBro(TreeNode parent, TreeNode grand, TreeNode bro) {
+    private static void balaLRByBro(TreeNode grand, TreeNode parent, TreeNode bro) {
         int isLeft = parent.isLeft;
         TreeNode sub = bro.right;
         bro.right.isBlack = parent.isBlack;
@@ -293,7 +348,7 @@ public class RedBlackTree {
         else grand.right = sub;
     }
 
-    private static void balaRLByBro(TreeNode parent, TreeNode grand, TreeNode bro) {
+    private static void balaRLByBro(TreeNode grand, TreeNode parent, TreeNode bro) {
         int isLeft = parent.isLeft;
         TreeNode sub = bro.left;
         bro.left.isBlack = parent.isBlack;
