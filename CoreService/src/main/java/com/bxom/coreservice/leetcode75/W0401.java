@@ -18,6 +18,7 @@ public class W0401 {
         Map<Integer, Integer> intoMap = new HashMap<>();
         for (int[] item : prerequisites) {
             intoMap.put(item[0], intoMap.getOrDefault(item[0], 0) + 1);
+            intoMap.put(item[1], intoMap.getOrDefault(item[1], 0));
         }
         List<Integer> sortedList = new ArrayList<>();
         for (Map.Entry<Integer, Integer> item : intoMap.entrySet()) {
