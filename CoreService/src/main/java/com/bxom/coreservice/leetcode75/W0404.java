@@ -11,11 +11,25 @@ public class W0404 {
      * @param args
      */
     public static void main(String[] args) {
-        log.info("result: {}", productExceptSelf(new int[]{1, 2}));
+        log.info("result: {}", productExceptSelf(new int[]{1, 2, 3, 4, 5}));
     }
 
     public static int[] solution(int[] nums) {
-        return nums;
+        int[] left = new int[nums.length];
+        left[0] = 1;
+        for (int i = 1; i < nums.length; i++) {
+            left[i] = nums[i - 1] * left[i - 1];
+        }
+        int[] right = new int[nums.length];
+        right[nums.length - 1] = 1;
+        for (int i = nums.length - 2; i >= 0; i--) {
+            right[i] = nums[i + 1] * right[i + 1];
+        }
+        int[] result = new int[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            result[i] = left[i] * right[i];
+        }
+        return result;
     }
 
     public static int[] productExceptSelf(int[] nums) {
