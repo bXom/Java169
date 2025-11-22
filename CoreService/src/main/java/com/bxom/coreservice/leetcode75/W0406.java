@@ -2,6 +2,9 @@ package com.bxom.coreservice.leetcode75;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 public class W0406 {
     /**
@@ -12,6 +15,29 @@ public class W0406 {
      */
     public static void main(String[] args) {
         log.info("result: {}", isValidBST(new TreeNode()));
+    }
+
+    // 中序遍历
+    public static boolean solution2(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        return foreach(root, list);
+    }
+
+    private static boolean foreach(TreeNode root, List<Integer> list) {
+        if (root == null) return true;
+        if (root.left != null) {
+            if (!foreach(root.left, list)) {
+                return false;
+            }
+        }
+        if (!list.isEmpty() && root.val <= list.get(list.size() - 1)) {
+            return false;
+        }
+        list.add(root.val);
+        if (root.right != null) {
+            return foreach(root.right, list);
+        }
+        return true;
     }
 
     public static boolean solution1(TreeNode root) {
