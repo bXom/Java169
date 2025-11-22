@@ -14,12 +14,32 @@ public class W0406 {
         log.info("result: {}", isValidBST(new TreeNode()));
     }
 
-    public static boolean solution(TreeNode root) {
-        return false;
+    public static boolean solution1(TreeNode root) {
+        if (root == null) return true;
+        boolean result = true;
+        if (root.left != null) {
+            result = compare(root.left, root.val, Long.MIN_VALUE);
+        }
+        if (root.right != null) {
+            result = result && compare(root.right, Long.MAX_VALUE, root.val);
+        }
+        return result;
+    }
+
+    private static boolean compare(TreeNode root, long max, long min) {
+        if (root == null) return true;
+        boolean result = root.val < max && root.val > min;
+        if (root.left != null) {
+            result = result && compare(root.left, root.val, min);
+        }
+        if (root.right != null) {
+            result = result && compare(root.right, max, root.val);
+        }
+        return result;
     }
 
     public static boolean isValidBST(TreeNode root) {
-        return solution(root);
+        return solution1(root);
     }
 
     static class TreeNode {
