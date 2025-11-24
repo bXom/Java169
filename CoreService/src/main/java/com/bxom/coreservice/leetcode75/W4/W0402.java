@@ -1,10 +1,7 @@
-package com.bxom.coreservice.leetcode75;
+package com.bxom.coreservice.leetcode75.W4;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Slf4j
 public class W0402 {

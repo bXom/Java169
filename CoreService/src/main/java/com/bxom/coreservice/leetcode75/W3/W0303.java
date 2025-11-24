@@ -1,12 +1,10 @@
-package com.bxom.coreservice.leetcode75;
+package com.bxom.coreservice.leetcode75.W3;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 public class W0303 {

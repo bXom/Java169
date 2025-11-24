@@ -1,4 +1,4 @@
-package com.bxom.coreservice.leetcode75;
+package com.bxom.coreservice.leetcode75.W5;
 
 public class W0508 {
     // 试题

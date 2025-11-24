@@ -1,4 +1,4 @@
-package com.bxom.coreservice.leetcode75;
+package com.bxom.coreservice.leetcode75.W3;
 
 import java.util.ArrayList;
 import java.util.HashMap;
