@@ -11,7 +11,7 @@ public class W0501 {
      * @param args
      */
     public static void main(String[] args) {
-        log.info("result: {}", search(new int[]{3, 5, 92, 1, 952, 34}, 1));
+        log.info("result: {}", search(new int[]{4, 5, 6, 7, 8, 9, 1, 2, 3}, 1));
     }
 
     public static int solution(int[] nums, int target) {
@@ -19,29 +19,29 @@ public class W0501 {
         int left = 0;
         int right = length - 1;
         while (left <= right) {
-            int mid = (right - left) / 2;
+            int mid = left + (right - left) / 2;
             if (nums[left] == target) return left;
             if (nums[right] == target) return right;
             if (nums[mid] == target) return mid;
-//            0
-//            6,0,1,2,3,4,5
-//            2,3,4,5,6,0,1
             if (nums[left] > nums[mid]) {
-                if (target < nums[mid]) {
+                if (target > nums[mid] && target < nums[left]) {
+                    left = mid + 1;
+                    right--;
+                } else {
                     right = mid - 1;
                     left++;
-                } else if (target > nums[left]) {
-                    right = mid;
+                }
+            } else {
+                if (target < nums[mid] && target > nums[left]) {
+                    right = mid - 1;
                     left++;
                 } else {
                     left = mid + 1;
                     right--;
                 }
-            } else {
-
             }
         }
-        return target;
+        return -1;
     }
 
     public static int search(int[] nums, int target) {
