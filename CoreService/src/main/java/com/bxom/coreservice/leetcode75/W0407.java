@@ -19,15 +19,13 @@ public class W0407 {
 
     public static int solution(char[][] grid) {
         int num = 0;
-        List<String> readXY = new ArrayList<>();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[0].length; j++) {
-                if (readXY.contains(i + "," + j)) {
-                    continue;
-                }
+        int xLength = grid.length;
+        int yLength = grid[0].length;
+        for (int i = 0; i < xLength; i++) {
+            for (int j = 0; j < yLength; j++) {
                 boolean isIsland = grid[i][j] == '1';
                 if (isIsland) {
-                    fs(grid, i, j, readXY);
+                    fs(grid, i, j);
                     num++;
                 }
             }
@@ -35,14 +33,15 @@ public class W0407 {
         return num;
     }
 
-    private static void fs(char[][] grid, int x, int y, List<String> readXY) {
-        if (x >= 0 && y >= 0 && x < grid.length && y < grid[0].length && grid[x][y] == '1' && !readXY.contains(x + "," + y)) {
-            readXY.add(x + "," + y);
+    private static void fs(char[][] grid, int x, int y) {
+        int xLength = grid.length;
+        int yLength = grid[0].length;
+        if (x >= 0 && y >= 0 && x < xLength && y < yLength && grid[x][y] == '1') {
             grid[x][y] = '0';
-            fs(grid, x + 1, y, readXY);
-            fs(grid, x - 1, y, readXY);
-            fs(grid, x, y + 1, readXY);
-            fs(grid, x, y - 1, readXY);
+            fs(grid, x + 1, y);
+            fs(grid, x - 1, y);
+            fs(grid, x, y + 1);
+            fs(grid, x, y - 1);
         }
     }
 
