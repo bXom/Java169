@@ -2,7 +2,9 @@ package com.bxom.coreservice.leetcode75.W5;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 public class W0504 {
@@ -13,31 +15,37 @@ public class W0504 {
      * @param args
      */
     public static void main(String[] args) {
-        log.info("result: {}", merge(new int[][]{{1, 3}, {15, 18}, {8, 10}, {2, 6}}));
+        int[][] result = merge(new int[][]{{1, 3}, {15, 18}, {8, 10}, {2, 6}});
+        for (int i = 0; i < result.length; i++) {
+            log.info("result: {}", result[i]);
+        }
+        result = merge(new int[][]{{1, 4}, {4, 6}});
+        for (int i = 0; i < result.length; i++) {
+            log.info("result: {}", result[i]);
+        }
     }
 
     public static int[][] solution(int[][] intervals) {
+        int length = intervals.length;
+        if (length < 2) return intervals;
         Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
-        int index = 0;
-        while (index < intervals.length - 1) {
-            int ahead0 = intervals[index][0];
-            int ahead1 = intervals[index][1];
-            int behind0 = intervals[index + 1][0];
-            int behind1 = intervals[index + 1][1];
-            int[] newInt = new int[]{ahead0, 0};
+        List<int[]> resultList = new ArrayList<>();
+        resultList.add(intervals[0]);
+        for (int i = 1; i < length; i++) {
+            int ahead1 = resultList.get(resultList.size() - 1)[1];
+            int behind0 = intervals[i][0];
+            int behind1 = intervals[i][1];
             if (behind0 <= ahead1) {
                 if (behind1 <= ahead1) {
-                    newInt[1] = ahead1;
+                    resultList.get(resultList.size() - 1)[1] = ahead1;
                 } else {
-                    newInt[1] = behind1;
+                    resultList.get(resultList.size() - 1)[1] = behind1;
                 }
-//                intervals[index + 1] = newInt;
-//                intervals.remove[index];
             } else {
-                index++;
+                resultList.add(intervals[i]);
             }
         }
-        return intervals;
+        return resultList.toArray(new int[resultList.size()][]);
     }
 
     public static int[][] merge(int[][] intervals) {
