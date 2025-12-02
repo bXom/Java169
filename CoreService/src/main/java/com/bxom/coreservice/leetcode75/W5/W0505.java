@@ -24,10 +24,52 @@ public class W0505 {
         log.info("result: {}", lowestCommonAncestor(node, nodeL, nodeR));
     }
 
+    /**
+     * 节省存储空间
+     *
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
     public static TreeNode solution2(TreeNode root, TreeNode p, TreeNode q) {
-        return root;
+        Map<Integer, TreeNode> parentMap = new HashMap<>();
+        parentMap.put(root.val, null);
+        foreach2(root, parentMap);
+        List<Integer> pParent = new ArrayList<>();
+        pParent.add(p.val);
+        while (p != null) {
+            pParent.add(p.val);
+            p = parentMap.get(p.val);
+        }
+        while (q != null) {
+            if (pParent.contains(q.val)) {
+                return q;
+            }
+            q = parentMap.get(q.val);
+        }
+        return null;
     }
 
+    private static void foreach2(TreeNode root, Map<Integer, TreeNode> parentMap) {
+        if (root.left != null) {
+            parentMap.put(root.left.val, root);
+            foreach2(root.left, parentMap);
+        }
+        if (root.right != null) {
+            parentMap.put(root.right.val, root);
+            foreach2(root.right, parentMap);
+        }
+    }
+
+    /**
+     * parentMap 中存储父节点链会消耗大量存储空间
+     *
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
     public static TreeNode solution1(TreeNode root, TreeNode p, TreeNode q) {
         Map<Integer, List<TreeNode>> map = new HashMap<>();
         foreach(root, new ArrayList<>(), map);
